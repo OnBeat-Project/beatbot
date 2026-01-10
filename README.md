@@ -1,2 +1,2 @@
-# bot-kt
-A kotlin p
+# OnBeat Bot
+This is OnBeat Open-source project.
