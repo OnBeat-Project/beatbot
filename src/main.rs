@@ -31,7 +31,9 @@ async fn main() -> Result<(), Error> {
             commands::play::play(),
             commands::skip::skip(),
             commands::leave::leave(),
-            commands::queue::queue()
+            commands::queue::queue(),
+            commands::volume::volume(),
+            commands::info::info()
         ],
         ..Default::default()
     })

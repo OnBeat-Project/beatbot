@@ -216,14 +216,14 @@ This project is open source and available under the [MIT License](LICENSE).
 If you need help or have questions:
 
 - Open an [issue](https://github.com/OnBeat-Project/onbeat-bot/issues)
-- Join our [Discord server](https://discord.gg/8HCVTjj8Q)
+- Join our [Discord server](https://discord.gg/Acfvz4MesZ)
 - Check existing issues and discussions
 
 ## 🗺️ Roadmap
 
 - [x] Queue viewing command
 - [ ] Loop/repeat functionality
-- [ ] Volume control
+- [x] Volume control
 - [ ] Song seeking
 - [ ] Lyrics display
 - [ ] DJ role permissions
