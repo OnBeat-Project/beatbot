@@ -15,6 +15,8 @@ use lavalink_rs::{
 use poise::serenity_prelude as serenity;
 use songbird::SerenityInit;
 
+use crate::utils::constants::COLOR_INFO;
+
 pub struct Data {
     pub lavalink: LavalinkClient,
     pub database: Database,
@@ -22,6 +24,39 @@ pub struct Data {
 
 pub type Error = Box<dyn std::error::Error + Send + Sync>;
 pub type Context<'a> = poise::Context<'a, Data, Error>;
+
+struct Handler;
+
+#[serenity::async_trait]
+impl serenity::EventHandler for Handler {
+    async fn guild_create(
+        &self,
+        ctx: serenity::Context,
+        guild: serenity::Guild,
+        is_new: Option<bool>,
+    ) {
+        let embed = serenity::CreateEmbed::default()
+            .title("Guild Added")
+            .description(format!(
+                "Bot was added in {:?}, now bot is in {:?} servers",
+                guild.name,
+                ctx.cache.guild_count()
+            ))
+            .color(COLOR_INFO);
+
+        let channel_id = match std::env::var("events_log_channel_id")
+            .ok()
+            .and_then(|s| s.parse::<u64>().ok())
+        {
+            Some(id) => serenity::ChannelId::new(id),
+            None => {
+                warn!("events_log_channel_id missing or invalid");
+                return;
+            }
+        };
+        let _ = channel_id.send_message(ctx.http, serenity::CreateMessage::new().embed(embed));
+    }
+}
 
 #[tokio::main]
 async fn main() -> Result<(), Error> {
@@ -96,6 +131,7 @@ async fn main() -> Result<(), Error> {
         std::env::var("BOT_TOKEN").expect("missing DISCORD_TOKEN"),
         serenity::GatewayIntents::non_privileged(),
     )
+    .event_handler(Handler)
     .register_songbird()
     .framework(framework)
     .await?;
