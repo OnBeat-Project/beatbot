@@ -1,17 +1,23 @@
-use crate::{Context, Error, utils::voicechannel::_join};
-use lavalink_rs::prelude::*;
-use serenity::all::AutocompleteChoice;
-use poise::serenity_prelude as serenity;
+use crate::{
+    Context, Error,
+    utils::{
+        constants::{COLOR_ERROR, COLOR_INFO, COLOR_SPOTIFY},
+        voicechannel::_join,
+    },
+};
 use ::serenity::all::Mentionable;
+use lavalink_rs::prelude::*;
+use poise::serenity_prelude as serenity;
+use serenity::all::AutocompleteChoice;
 
 async fn play_autocomplete(ctx: Context<'_>, partial: &str) -> Vec<AutocompleteChoice> {
     let lava_client = ctx.data().lavalink.clone();
     let mut choices = Vec::new();
-    
-    if partial.is_empty() {
+
+    if partial.is_empty() || partial.len() < 2 {
         return choices;
     }
-    
+
     let query = if partial.starts_with("http") {
         partial.to_string()
     } else {
@@ -20,8 +26,11 @@ async fn play_autocomplete(ctx: Context<'_>, partial: &str) -> Vec<AutocompleteC
             Err(_) => return choices,
         }
     };
-    
-    if let Ok(loaded_tracks) = lava_client.load_tracks(ctx.guild_id().unwrap(), &query).await {
+
+    if let Ok(loaded_tracks) = lava_client
+        .load_tracks(ctx.guild_id().unwrap(), &query)
+        .await
+    {
         match loaded_tracks.data {
             Some(TrackLoadData::Search(tracks)) => {
                 for track in tracks.iter().take(25) {
@@ -49,7 +58,7 @@ fn format_duration(ms: u64) -> String {
     let seconds = ms / 1000;
     let minutes = seconds / 60;
     let hours = minutes / 60;
-    
+
     if hours > 0 {
         format!("{}:{:02}:{:02}", hours, minutes % 60, seconds % 60)
     } else {
@@ -68,18 +77,23 @@ pub async fn play(
     let guild_id = ctx.guild_id().unwrap();
     let has_joined = _join(&ctx, guild_id, None).await?;
     let lava_client = ctx.data().lavalink.clone();
-    let error_emoji = crate::utils::emojis::get_emoji(ctx.serenity_context(), "cross".to_string()).await;
-    let _success_emoji = crate::utils::emojis::get_emoji(ctx.serenity_context(), "check".to_string()).await;
-    let playlist_emoji = crate::utils::emojis::get_emoji(ctx.serenity_context(), "album".to_string()).await;
-    let player_emoji = crate::utils::emojis::get_emoji(ctx.serenity_context(), "player".to_string()).await;
-    let spotify_emoji = crate::utils::emojis::get_emoji(ctx.serenity_context(), "spotify".to_string()).await;
+    let error_emoji =
+        crate::utils::emojis::get_emoji(ctx.serenity_context(), "cross".to_string()).await;
+    let _success_emoji =
+        crate::utils::emojis::get_emoji(ctx.serenity_context(), "check".to_string()).await;
+    let playlist_emoji =
+        crate::utils::emojis::get_emoji(ctx.serenity_context(), "album".to_string()).await;
+    let player_emoji =
+        crate::utils::emojis::get_emoji(ctx.serenity_context(), "player".to_string()).await;
+    let spotify_emoji =
+        crate::utils::emojis::get_emoji(ctx.serenity_context(), "spotify".to_string()).await;
 
     let Some(player) = lava_client.get_player_context(guild_id) else {
         let embed = serenity::CreateEmbed::default()
             .title(format!("{} Not Connected", error_emoji.unwrap_or_default()))
             .description("Join the bot to a voice channel first.")
-            .color(0xE74C3C);
-        
+            .color(COLOR_ERROR);
+
         ctx.send(poise::CreateReply::default().embed(embed)).await?;
         return Ok(());
     };
@@ -105,8 +119,8 @@ pub async fn play(
             let embed = serenity::CreateEmbed::default()
                 .title(format!("{} No Results", error_emoji.unwrap_or_default()))
                 .description("No tracks found matching your search.")
-                .color(0xE74C3C);
-            
+                .color(COLOR_ERROR);
+
             ctx.send(poise::CreateReply::default().embed(embed)).await?;
             return Ok(());
         }
@@ -114,38 +128,48 @@ pub async fn play(
 
     if let Some(info) = playlist_info {
         let embed = serenity::CreateEmbed::default()
-            .title(format!("{} Playlist Added", playlist_emoji.unwrap_or_default()))
+            .title(format!(
+                "{} Playlist Added",
+                playlist_emoji.unwrap_or_default()
+            ))
             .description(format!("**{}**", info.name))
             .field("Tracks Added", format!("{}", tracks.len()), true)
-            .color(0x9B59B6)
-            .footer(serenity::CreateEmbedFooter::new(format!("Requested by {}", ctx.author().name)))
+            .color(COLOR_INFO)
+            .footer(serenity::CreateEmbedFooter::new(format!(
+                "Requested by {}",
+                ctx.author().name
+            )))
             .thumbnail(ctx.author().avatar_url().unwrap_or_default());
-        
+
         ctx.send(poise::CreateReply::default().embed(embed)).await?;
     } else {
         let track = &tracks[0].track;
-        
+
         let duration = if track.info.length > 0 {
             format_duration(track.info.length)
         } else {
             format!("{} LIVE", player_emoji.unwrap_or_default())
         };
-        
+
         let mut embed = serenity::CreateEmbed::default()
-            .title(format!("{} Added to Queue", spotify_emoji.unwrap_or_default()))
-            .description(format!("**[{} - {}]({})**", 
-                track.info.author, 
+            .title(format!(
+                "{} Added to Queue",
+                spotify_emoji.unwrap_or_default()
+            ))
+            .description(format!(
+                "**[{} - {}]({})**",
+                track.info.author,
                 track.info.title,
                 track.info.uri.as_ref().unwrap_or(&String::from("#"))
             ))
             .field("Duration", duration, true)
             .field("Requested by", ctx.author().mention().to_string(), true)
-            .color(0x1DB954);
-        
+            .color(COLOR_SPOTIFY);
+
         if let Some(artwork) = &track.info.artwork_url {
             embed = embed.thumbnail(artwork);
         }
-        
+
         ctx.send(poise::CreateReply::default().embed(embed)).await?;
     }
 
@@ -155,11 +179,11 @@ pub async fn play(
 
     let queue = player.get_queue();
     queue.append(tracks.into())?;
-    
+
     if player.get_player().await?.track.is_none() {
         player.skip()?;
     }
-    
+
     if has_joined {
         return Ok(());
     }

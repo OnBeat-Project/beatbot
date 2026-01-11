@@ -1,4 +1,7 @@
-use crate::{Context, Error, utils::emojis};
+use crate::{
+    Context, Error,
+    utils::{constants::COLOR_SUCCESS, emojis},
+};
 use poise::serenity_prelude as serenity;
 
 /// Leave the voice channel
@@ -15,9 +18,12 @@ pub async fn leave(ctx: Context<'_>) -> Result<(), Error> {
         manager.remove(guild_id).await?;
     }
     let embed = serenity::CreateEmbed::default()
-        .title(format!("{} Left voice channel", success_emoji.unwrap_or_default()))
+        .title(format!(
+            "{} Left voice channel",
+            success_emoji.unwrap_or_default()
+        ))
         .description("")
-        .color(0x2ECC71);
+        .color(COLOR_SUCCESS);
     ctx.send(poise::CreateReply::default().embed(embed)).await?;
 
     Ok(())

@@ -14,6 +14,7 @@ A modern Discord music bot built with Rust, featuring high-quality audio playbac
 - ⚡ **Fast & Efficient** - Built with Rust for optimal performance
 - 🎨 **Beautiful Embeds** - Rich, colorful Discord embeds for all responses
 
+<!--
 ## 📋 Commands
 
 | Command | Description | Usage |
@@ -21,6 +22,7 @@ A modern Discord music bot built with Rust, featuring high-quality audio playbac
 | `/join` | Makes the bot join your voice channel | `/join` |
 | `/play` | Plays a song or playlist from Spotify/URL | `/play <query or URL>` |
 | `/skip` | Skips the currently playing track | `/skip` |
+-->
 
 ## 🔗 Add to Your Server
 
@@ -126,6 +128,7 @@ java -jar Lavalink.jar
 
 Then run the bot and test your changes thoroughly before submitting a pull request.
 
+<!--
 ## 🏗️ Project Structure
 
 ```
@@ -146,7 +149,7 @@ onbeat-bot/
 ├── .gitignore
 └── README.md
 ```
-
+-->
 ## 🛠️ Technologies Used
 
 - **[Rust](https://www.rust-lang.org/)** - Systems programming language
@@ -224,9 +227,9 @@ If you need help or have questions:
 - [x] Queue viewing command
 - [ ] Loop/repeat functionality
 - [x] Volume control
-- [ ] Song seeking
+- [x] Song seeking
 - [ ] Lyrics display
-- [ ] DJ role permissions
+- [x] DJ role permissions
 - [ ] Web dashboard
 - [ ] More music sources (SoundCloud, Apple Music)
 

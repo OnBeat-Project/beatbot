@@ -1,24 +1,19 @@
 use crate::{
     Context, Error,
-    utils::constants::{COLOR_ERROR, COLOR_INFO},
+    utils::constants::{COLOR_ERROR, COLOR_SUCCESS},
 };
 use poise::serenity_prelude as serenity;
 
-/// Set track volume
-#[poise::command(slash_command)]
-pub async fn volume(
-    ctx: Context<'_>,
-    #[description = "Set track volume"]
-    #[min = 0]
-    #[max = 200]
-    vol: u16,
-) -> Result<(), Error> {
+/// Clear the current queue.
+#[poise::command(slash_command, prefix_command)]
+pub async fn clear(ctx: Context<'_>) -> Result<(), Error> {
     let guild_id = ctx.guild_id().unwrap();
-    let lava_client = ctx.data().lavalink.clone();
     let error_emoji =
         crate::utils::emojis::get_emoji(ctx.serenity_context(), "cross".to_string()).await;
-    let vol_emoji =
-        crate::utils::emojis::get_emoji(ctx.serenity_context(), "vol3".to_string()).await;
+    let playlist_emoji =
+        crate::utils::emojis::get_emoji(ctx.serenity_context(), "album".to_string()).await;
+    let lava_client = ctx.data().lavalink.clone();
+
     let Some(player) = lava_client.get_player_context(guild_id) else {
         let embed = serenity::CreateEmbed::default()
             .title(format!("{} Not Connected", error_emoji.unwrap_or_default()))
@@ -29,13 +24,15 @@ pub async fn volume(
         return Ok(());
     };
 
-    player.set_volume(vol).await?;
+    player.get_queue().clear()?;
 
     let embed = serenity::CreateEmbed::default()
-        .title(format!("{} Volume set", vol_emoji.unwrap_or_default()))
-        .description(format!("Volume set to {}%", vol))
-        .color(COLOR_INFO);
-    ctx.send(poise::CreateReply::default().embed(embed)).await?;
+        .title(format!(
+            "{} Queue cleared!",
+            playlist_emoji.unwrap_or_default()
+        ))
+        .color(COLOR_SUCCESS);
 
+    ctx.send(poise::CreateReply::default().embed(embed)).await?;
     Ok(())
 }
