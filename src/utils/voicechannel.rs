@@ -27,7 +27,7 @@ pub async fn _join(
                 match user_channel_id {
                     Some(channel) => channel,
                     None => {
-                        ctx.say("Not in a voice channel").await?;
+                    //    ctx.say("Not in a voice channel").await?;
 
                         return Err("Not in a voice channel".into());
                     }

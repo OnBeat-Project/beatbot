@@ -28,7 +28,10 @@ async fn main() -> Result<(), Error> {
     .options(poise::FrameworkOptions {
         commands: vec![
             commands::join::join(),
-            commands::play::play()
+            commands::play::play(),
+            commands::skip::skip(),
+            commands::leave::leave(),
+            commands::queue::queue()
         ],
         ..Default::default()
     })

@@ -57,6 +57,7 @@ fn format_duration(ms: u64) -> String {
     }
 }
 
+/// Play a track or playlist
 #[poise::command(slash_command)]
 pub async fn play(
     ctx: Context<'_>,
@@ -67,10 +68,15 @@ pub async fn play(
     let guild_id = ctx.guild_id().unwrap();
     let has_joined = _join(&ctx, guild_id, None).await?;
     let lava_client = ctx.data().lavalink.clone();
+    let error_emoji = crate::utils::emojis::get_emoji(ctx.serenity_context(), "cross".to_string()).await;
+    let _success_emoji = crate::utils::emojis::get_emoji(ctx.serenity_context(), "check".to_string()).await;
+    let playlist_emoji = crate::utils::emojis::get_emoji(ctx.serenity_context(), "album".to_string()).await;
+    let player_emoji = crate::utils::emojis::get_emoji(ctx.serenity_context(), "player".to_string()).await;
+    let spotify_emoji = crate::utils::emojis::get_emoji(ctx.serenity_context(), "spotify".to_string()).await;
 
     let Some(player) = lava_client.get_player_context(guild_id) else {
         let embed = serenity::CreateEmbed::default()
-            .title("<:cross2:1458871191430365405> Not Connected")
+            .title(format!("{} Not Connected", error_emoji.unwrap_or_default()))
             .description("Join the bot to a voice channel first.")
             .color(0xE74C3C);
         
@@ -97,7 +103,7 @@ pub async fn play(
         }
         _ => {
             let embed = serenity::CreateEmbed::default()
-                .title("<:cross2:1458871191430365405> No Results")
+                .title(format!("{} No Results", error_emoji.unwrap_or_default()))
                 .description("No tracks found matching your search.")
                 .color(0xE74C3C);
             
@@ -108,7 +114,7 @@ pub async fn play(
 
     if let Some(info) = playlist_info {
         let embed = serenity::CreateEmbed::default()
-            .title("<:album:1458800831297097861> Playlist Added")
+            .title(format!("{} Playlist Added", playlist_emoji.unwrap_or_default()))
             .description(format!("**{}**", info.name))
             .field("Tracks Added", format!("{}", tracks.len()), true)
             .color(0x9B59B6)
@@ -122,11 +128,11 @@ pub async fn play(
         let duration = if track.info.length > 0 {
             format_duration(track.info.length)
         } else {
-            "<:player:1459531577494212834> LIVE".to_string()
+            format!("{} LIVE", player_emoji.unwrap_or_default())
         };
         
         let mut embed = serenity::CreateEmbed::default()
-            .title("<:disc:1458800821448999105> Added to Queue")
+            .title(format!("{} Added to Queue", spotify_emoji.unwrap_or_default()))
             .description(format!("**[{} - {}]({})**", 
                 track.info.author, 
                 track.info.title,

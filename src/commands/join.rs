@@ -1,6 +1,7 @@
 use crate::{Context, Error, utils::voicechannel::_join};
 use poise::serenity_prelude as serenity;
 
+/// Join the voice channel
 #[poise::command(slash_command)]
 pub async fn join(ctx: Context<'_>) -> Result<(), Error> {
     let guild_id = ctx.guild_id().unwrap();
@@ -11,10 +12,12 @@ pub async fn join(ctx: Context<'_>) -> Result<(), Error> {
     let me_voice = cache.guild(guild_id).and_then(|g| {
         g.voice_states.get(&cache.current_user().id).and_then(|vs| vs.channel_id)
     });
-    
+    let error_emoji = crate::utils::emojis::get_emoji(ctx.serenity_context(), "cross".to_string()).await;
+    let success_emoji = crate::utils::emojis::get_emoji(ctx.serenity_context(), "check".to_string()).await;
+    let alert_emoji = crate::utils::emojis::get_emoji(ctx.serenity_context(), "caution".to_string()).await;
     if user_voice.is_none() {
         let embed = serenity::CreateEmbed::default()
-            .title("<:cross2:1458871191430365405> Cannot Join")
+            .title(format!("{} Cannot Join", error_emoji.unwrap_or_default()))
             .description("You must be in a voice channel to use this command.")
             .color(0xE74C3C);
         
@@ -24,7 +27,7 @@ pub async fn join(ctx: Context<'_>) -> Result<(), Error> {
     
     if me_voice == user_voice {
         let embed = serenity::CreateEmbed::default()
-            .title("<:checkpixel:1458868000001228850> Already Connected")
+            .title(format!("{} Already Connected", success_emoji.unwrap_or_default()))
             .description("I am already in your voice channel!")
             .color(0x3498DB);
         
@@ -34,7 +37,7 @@ pub async fn join(ctx: Context<'_>) -> Result<(), Error> {
     
     if me_voice != user_voice && me_voice.is_some() {
         let embed = serenity::CreateEmbed::default()
-            .title("<:alertwindow:1458871187554959627> Busy")
+            .title(format!("{} Busy", alert_emoji.unwrap_or_default()))
             .description("I am currently in another voice channel.")
             .color(0xF39C12);
         
@@ -45,7 +48,7 @@ pub async fn join(ctx: Context<'_>) -> Result<(), Error> {
     _join(&ctx, guild_id, user_voice).await?;
     
     let embed = serenity::CreateEmbed::default()
-        .title("<:check2:1458871189874413619> Joined Voice Channel")
+        .title(format!("{} Joined Voice Channel", success_emoji.unwrap_or_default()))
         .description(format!("Successfully joined <#{}>", user_voice.unwrap()))
         .color(0x2ECC71)
         .footer(serenity::CreateEmbedFooter::new(format!("Requested by {}", ctx.author().name)));
