@@ -1,4 +1,4 @@
-use crate::{Context, Error, database::queries, utils::player_data::PlayerData};
+use crate::{Context, Error, database::queries, utils::{player_data::PlayerData, autodisconnect::AutoDisconnectManager}};
 use poise::serenity_prelude as serenity;
 use std::{ops::Deref, sync::Arc};
 
@@ -50,6 +50,14 @@ pub async fn _join(
 
                 let config = queries::get_guild_config(db, guild_id.get() as i64).await?;
                 player_ctx.set_volume(config.volume as u16).await?;
+
+                // Start auto-disconnect monitoring
+                let auto_disconnect = AutoDisconnectManager::new(
+                    guild_id,
+                    Arc::new(db.clone()),
+                    ctx.serenity_context().clone(),
+                );
+                auto_disconnect.start_monitoring(lava_client.clone()).await;
 
                 return Ok(true);
             }

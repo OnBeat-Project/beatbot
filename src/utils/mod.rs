@@ -1,4 +1,5 @@
 pub mod announcements;
+pub mod autodisconnect;
 pub mod embeds;
 pub mod emojis;
 pub mod filters;
