@@ -1,5 +1,6 @@
 use crate::{
     Context, Error,
+    database::queries,
     utils::{
         constants::{COLOR_ERROR, COLOR_INFO, COLOR_SPOTIFY},
         voicechannel::_join,
@@ -46,7 +47,7 @@ async fn play_autocomplete(ctx: Context<'_>, partial: &str) -> Vec<AutocompleteC
             }
             Some(TrackLoadData::Playlist(playlist)) => {
                 let title = playlist.info.name.clone();
-                choices.push(AutocompleteChoice::new(title, playlist.info.name));
+                choices.push(AutocompleteChoice::new(title, query));
             }
             _ => {}
         }
@@ -87,6 +88,9 @@ pub async fn play(
         crate::utils::emojis::get_emoji(ctx.serenity_context(), "player".to_string()).await;
     let spotify_emoji =
         crate::utils::emojis::get_emoji(ctx.serenity_context(), "spotify".to_string()).await;
+    let pool = ctx.data().database.pool();
+    let guild_config = queries::get_guild_config(pool, guild_id.get() as i64).await?;
+    let max_queue = guild_config.max_queue_length;
 
     let Some(player) = lava_client.get_player_context(guild_id) else {
         let embed = serenity::CreateEmbed::default()
@@ -126,6 +130,20 @@ pub async fn play(
         }
     };
 
+    if player.get_queue().get_count().await.unwrap() as i32 >= max_queue {
+        let embed = serenity::CreateEmbed::default()
+            .title(format!(
+                "{} Cannot add more tracks",
+                error_emoji.unwrap_or_default()
+            ))
+            .description(format!(
+                "You can't add more songs due to the queue limit of this server, which is {:?}",
+                max_queue
+            ))
+            .color(COLOR_ERROR);
+        ctx.send(poise::CreateReply::default().embed(embed)).await?;
+        return Ok(());
+    }
     if let Some(info) = playlist_info {
         let embed = serenity::CreateEmbed::default()
             .title(format!(

@@ -48,7 +48,12 @@ pub async fn queue(ctx: Context<'_>) -> Result<(), Error> {
 
     let embed = serenity::CreateEmbed::default()
         .title(format!("{} Queue", album_emoji.unwrap_or_default()))
-        .description(format!("{}**On Queue**:\n{}", now_playing, queue_list))
+        .description(format!(
+            "{}**On Queue**:\n{}\nand more {} tracks",
+            now_playing,
+            queue_list,
+            queue.get_count().await.unwrap_or_default() - 9
+        ))
         .color(COLOR_INFO);
 
     ctx.send(poise::CreateReply::default().embed(embed)).await?;
