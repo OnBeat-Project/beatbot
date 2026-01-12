@@ -31,7 +31,7 @@ struct Handler;
 
 #[serenity::async_trait]
 impl serenity::EventHandler for Handler {
-    async fn ready(&self, ctx: serenity::Context, ready: serenity::Ready) {
+    async fn ready(&self, ctx: serenity::Context, _ready: serenity::Ready) {
         let _ = set_guild_activity(&ctx);
     }
     async fn guild_create(
@@ -124,7 +124,7 @@ async fn main() -> Result<(), Error> {
                 let node_local = NodeBuilder {
                     hostname,
                     is_ssl: false,
-                    events: events.clone(),
+                    events: events::Events::default(),
                     password,
                     user_id: ctx.cache.current_user().id.into(),
                     session_id: None,
