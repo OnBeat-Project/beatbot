@@ -6,8 +6,10 @@ pub mod database;
 pub mod music_events;
 pub mod utils;
 
+use ::serenity::all::ActivityData;
 use database::Database;
 use std::env;
+use url::Url;
 
 use lavalink_rs::{
     client::LavalinkClient, model::events, node::NodeBuilder, prelude::NodeDistributionStrategy,
@@ -29,11 +31,14 @@ struct Handler;
 
 #[serenity::async_trait]
 impl serenity::EventHandler for Handler {
+    async fn ready(&self, ctx: serenity::Context, ready: serenity::Ready) {
+        let _ = set_guild_activity(&ctx);
+    }
     async fn guild_create(
         &self,
         ctx: serenity::Context,
         guild: serenity::Guild,
-        is_new: Option<bool>,
+        _is_new: Option<bool>,
     ) {
         let embed = serenity::CreateEmbed::default()
             .title("Guild Added")
@@ -54,8 +59,21 @@ impl serenity::EventHandler for Handler {
                 return;
             }
         };
+        let _activity = set_guild_activity(&ctx);
         let _ = channel_id.send_message(ctx.http, serenity::CreateMessage::new().embed(embed));
     }
+}
+
+fn set_guild_activity(ctx: &serenity::Context) {
+    ctx.set_activity(Some(ActivityData {
+        name: format!("{} servers", ctx.cache.guild_count()),
+        kind: serenity::ActivityType::Listening,
+        state: format!("{} servers", ctx.cache.guild_count()).into(),
+        url: Some(
+            Url::parse("https://twitch.tv/notigorwastaken")
+                .expect("Expected twitch.tv url or something"),
+        ),
+    }));
 }
 
 #[tokio::main]
