@@ -8,14 +8,14 @@ use crate::database::queries;
 pub struct AutoDisconnectManager {
     guild_id: serenity::GuildId,
     db: Arc<sqlx::SqlitePool>,
-    ctx: serenity::Context
+    ctx: serenity::Context,
 }
 
 impl AutoDisconnectManager {
     pub fn new(
         guild_id: serenity::GuildId,
         db: Arc<sqlx::SqlitePool>,
-        ctx: serenity::Context
+        ctx: serenity::Context,
     ) -> Self {
         Self { guild_id, db, ctx }
     }
@@ -125,8 +125,8 @@ impl AutoDisconnectManager {
 
     async fn check_if_alone(&self) -> bool {
         let cache = self.ctx.cache.clone(); /*match self.ctx.cache() {
-            Some(c) => c,
-            None => return false,
+        Some(c) => c,
+        None => return false,
         };*/
 
         let guild = match cache.guild(self.guild_id) {

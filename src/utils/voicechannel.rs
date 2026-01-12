@@ -1,4 +1,8 @@
-use crate::{Context, Error, database::queries, utils::{player_data::PlayerData, autodisconnect::AutoDisconnectManager}};
+use crate::{
+    Context, Error,
+    database::queries,
+    utils::{autodisconnect::AutoDisconnectManager, player_data::PlayerData},
+};
 use poise::serenity_prelude as serenity;
 use std::{ops::Deref, sync::Arc};
 
