@@ -102,7 +102,8 @@ async fn main() -> Result<(), Error> {
                 commands::clear::clear(),
                 commands::stop::stop(),
                 commands::pause::pause(),
-                commands::resume::resume()
+                commands::resume::resume(),
+                commands::remove::remove(),
             ],
             ..Default::default()
         })
