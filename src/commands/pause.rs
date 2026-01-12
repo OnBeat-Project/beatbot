@@ -1,0 +1,66 @@
+use crate::{
+    Context, Error,
+    utils::{
+        constants::{COLOR_ERROR, COLOR_SUCCESS},
+        permissions,
+    },
+};
+use poise::serenity_prelude as serenity;
+
+/// Pause the current song.
+#[poise::command(slash_command, prefix_command)]
+pub async fn pause(ctx: Context<'_>) -> Result<(), Error> {
+    let guild_id = ctx.guild_id().unwrap();
+    let is_dj_or_admin = permissions::check_dj_or_admin(ctx).await?;
+    let check_in_voice = permissions::check_in_voice(ctx).await?;
+    let error_emoji =
+        crate::utils::emojis::get_emoji(ctx.serenity_context(), "cross".to_string()).await;
+    let success_emoji =
+        crate::utils::emojis::get_emoji(ctx.serenity_context(), "check".to_string()).await;
+    let lava_client = ctx.data().lavalink.clone();
+
+    if !is_dj_or_admin {
+        let embed = serenity::CreateEmbed::default()
+            .title(format!(
+                "{} Permission Denied",
+                error_emoji.unwrap_or_default()
+            ))
+            .description("You need the DJ role or admin permissions to use this command.")
+            .color(COLOR_ERROR);
+
+        ctx.send(poise::CreateReply::default().embed(embed)).await?;
+        return Ok(());
+    }
+
+    if !check_in_voice {
+        let embed = serenity::CreateEmbed::default()
+            .title(format!(
+                "{} Not in Voice Channel",
+                error_emoji.unwrap_or_default()
+            ))
+            .description("You must be in the same voice channel as the bot.")
+            .color(COLOR_ERROR);
+
+        ctx.send(poise::CreateReply::default().embed(embed)).await?;
+        return Ok(());
+    }
+
+    let Some(player) = lava_client.get_player_context(guild_id) else {
+        let embed = serenity::CreateEmbed::default()
+            .title(format!("{} Not Connected", error_emoji.unwrap_or_default()))
+            .description("Join the bot to a voice channel first.")
+            .color(COLOR_ERROR);
+
+        ctx.send(poise::CreateReply::default().embed(embed)).await?;
+        return Ok(());
+    };
+
+    player.set_pause(true).await?;
+
+    let embed = serenity::CreateEmbed::default()
+        .title(format!("{} Paused!", success_emoji.unwrap_or_default()))
+        .color(COLOR_SUCCESS);
+
+    ctx.send(poise::CreateReply::default().embed(embed)).await?;
+    Ok(())
+}
