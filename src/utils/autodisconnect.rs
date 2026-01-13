@@ -1,5 +1,4 @@
 use poise::serenity_prelude as serenity;
-use std::sync::Arc;
 use std::time::Duration;
 use tokio::time::sleep;
 
@@ -7,14 +6,14 @@ use crate::database::queries;
 
 pub struct AutoDisconnectManager {
     guild_id: serenity::GuildId,
-    db: Arc<sqlx::SqlitePool>,
+    db: sqlx::SqlitePool,
     ctx: serenity::Context,
 }
 
 impl AutoDisconnectManager {
     pub fn new(
         guild_id: serenity::GuildId,
-        db: Arc<sqlx::SqlitePool>,
+        db: sqlx::SqlitePool,
         ctx: serenity::Context,
     ) -> Self {
         Self { guild_id, db, ctx }

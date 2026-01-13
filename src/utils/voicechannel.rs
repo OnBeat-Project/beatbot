@@ -59,7 +59,7 @@ pub async fn _join(
                 // Start auto-disconnect monitoring
                 let auto_disconnect = AutoDisconnectManager::new(
                     guild_id,
-                    Arc::new(db.clone()),
+                    db.clone(),
                     ctx.serenity_context().clone(),
                 );
                 auto_disconnect.start_monitoring(lava_client.clone()).await;
