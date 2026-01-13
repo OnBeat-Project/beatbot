@@ -78,16 +78,11 @@ pub async fn play(
     let guild_id = ctx.guild_id().unwrap();
     let has_joined = _join(&ctx, guild_id, None).await?;
     let lava_client = ctx.data().lavalink.clone();
-    let error_emoji =
-        crate::utils::emojis::get_emoji(ctx.serenity_context(), "cross").await;
-    let _success_emoji =
-        crate::utils::emojis::get_emoji(ctx.serenity_context(), "check").await;
-    let playlist_emoji =
-        crate::utils::emojis::get_emoji(ctx.serenity_context(), "album").await;
-    let player_emoji =
-        crate::utils::emojis::get_emoji(ctx.serenity_context(), "player").await;
-    let spotify_emoji =
-        crate::utils::emojis::get_emoji(ctx.serenity_context(), "spotify").await;
+    let error_emoji = crate::utils::emojis::get_emoji(ctx.serenity_context(), "cross").await;
+    let _success_emoji = crate::utils::emojis::get_emoji(ctx.serenity_context(), "check").await;
+    let playlist_emoji = crate::utils::emojis::get_emoji(ctx.serenity_context(), "album").await;
+    let player_emoji = crate::utils::emojis::get_emoji(ctx.serenity_context(), "player").await;
+    let spotify_emoji = crate::utils::emojis::get_emoji(ctx.serenity_context(), "spotify").await;
     let pool = ctx.data().database.pool();
     let guild_config = queries::get_guild_config(pool, guild_id.get() as i64).await?;
     let max_queue = guild_config.max_queue_length;
@@ -206,10 +201,11 @@ pub async fn play(
         return Ok(());
     }
 
-    if let Ok(player_data) = player.get_player().await {
-        if player_data.track.is_none() && queue.get_track(0).await.is_ok_and(|x| x.is_some()) {
-            player.skip()?;
-        }
+    if let Ok(player_data) = player.get_player().await
+        && player_data.track.is_none()
+        && queue.get_track(0).await.is_ok_and(|x| x.is_some())
+    {
+        player.skip()?;
     }
 
     Ok(())

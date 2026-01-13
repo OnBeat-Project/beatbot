@@ -15,10 +15,8 @@ pub async fn skip(ctx: Context<'_>) -> Result<(), Error> {
     let author_name = ctx.author().name.clone();
     let is_dj_or_admin = permissions::check_dj_or_admin(ctx).await?;
     let check_in_voice = permissions::check_in_voice(ctx).await?;
-    let error_emoji =
-        crate::utils::emojis::get_emoji(ctx.serenity_context(), "cross").await;
-    let skip_emoji =
-        crate::utils::emojis::get_emoji(ctx.serenity_context(), "skiparrow").await;
+    let error_emoji = crate::utils::emojis::get_emoji(ctx.serenity_context(), "cross").await;
+    let skip_emoji = crate::utils::emojis::get_emoji(ctx.serenity_context(), "skiparrow").await;
     if !is_dj_or_admin {
         let embed = serenity::CreateEmbed::default()
             .title(format!(

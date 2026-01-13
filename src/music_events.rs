@@ -27,13 +27,12 @@ pub async fn ready_event(client: LavalinkClient, session_id: String, event: &eve
 pub async fn track_start(client: LavalinkClient, _session_id: String, event: &events::TrackStart) {
     info!("Track started: {:?}", event.track.info.title);
 
-    if let Some(player) = client.get_player_context(event.guild_id) {
-        if let Ok(data) = player.data::<PlayerData>() {
-            let config = match crate::database::queries::get_guild_config(
-                &data.db,
-                event.guild_id.0 as i64,
-            )
-            .await
+    if let Some(player) = client.get_player_context(event.guild_id)
+        && let Ok(data) = player.data::<PlayerData>()
+    {
+        let config =
+            match crate::database::queries::get_guild_config(&data.db, event.guild_id.0 as i64)
+                .await
             {
                 Ok(c) => c,
                 Err(e) => {
@@ -42,34 +41,33 @@ pub async fn track_start(client: LavalinkClient, _session_id: String, event: &ev
                 }
             };
 
-            if !config.announce_songs {
-                return;
-            }
+        if !config.announce_songs {
+            return;
+        }
 
-            let announce_channel = if let Some(channel_id) = config.announce_channel_id {
-                serenity::ChannelId::new(channel_id as u64)
-            } else {
-                data.channel_id
-            };
+        let announce_channel = if let Some(channel_id) = config.announce_channel_id {
+            serenity::ChannelId::new(channel_id as u64)
+        } else {
+            data.channel_id
+        };
 
-            let requester_id = event
-                .track
-                .user_data
-                .as_ref()
-                .and_then(|d| d["requester_id"].as_u64())
-                .unwrap_or(0);
+        let requester_id = event
+            .track
+            .user_data
+            .as_ref()
+            .and_then(|d| d["requester_id"].as_u64())
+            .unwrap_or(0);
 
-            let embed = AnnouncementBuilder::now_playing(&event.track, requester_id);
+        let embed = AnnouncementBuilder::now_playing(&event.track, requester_id);
 
-            if let Err(e) = announce_channel
-                .send_message(
-                    data.http.as_ref(),
-                    serenity::CreateMessage::default().embed(embed),
-                )
-                .await
-            {
-                error!("Failed to send track start announcement: {:?}", e);
-            }
+        if let Err(e) = announce_channel
+            .send_message(
+                data.http.as_ref(),
+                serenity::CreateMessage::default().embed(embed),
+            )
+            .await
+        {
+            error!("Failed to send track start announcement: {:?}", e);
         }
     }
 }
@@ -83,39 +81,35 @@ pub async fn track_end(client: LavalinkClient, _session_id: String, event: &even
 
     if event.reason != events::TrackEndReason::Replaced
         && event.reason != events::TrackEndReason::Stopped
+        && let Some(player) = client.get_player_context(event.guild_id)
+        && let Ok(data) = player.data::<PlayerData>()
     {
-        if let Some(player) = client.get_player_context(event.guild_id) {
-            if let Ok(data) = player.data::<PlayerData>() {
-                let config = match crate::database::queries::get_guild_config(
-                    &data.db,
-                    event.guild_id.0 as i64,
-                )
+        let config =
+            match crate::database::queries::get_guild_config(&data.db, event.guild_id.0 as i64)
                 .await
-                {
-                    Ok(c) => c,
-                    Err(_) => return,
-                };
+            {
+                Ok(c) => c,
+                Err(_) => return,
+            };
 
-                if !config.announce_songs {
-                    return;
-                }
-
-                let announce_channel = if let Some(channel_id) = config.announce_channel_id {
-                    serenity::ChannelId::new(channel_id as u64)
-                } else {
-                    data.channel_id
-                };
-
-                let embed = AnnouncementBuilder::track_ended(&event.track);
-
-                let _ = announce_channel
-                    .send_message(
-                        data.http.as_ref(),
-                        serenity::CreateMessage::default().embed(embed),
-                    )
-                    .await;
-            }
+        if !config.announce_songs {
+            return;
         }
+
+        let announce_channel = if let Some(channel_id) = config.announce_channel_id {
+            serenity::ChannelId::new(channel_id as u64)
+        } else {
+            data.channel_id
+        };
+
+        let embed = AnnouncementBuilder::track_ended(&event.track);
+
+        let _ = announce_channel
+            .send_message(
+                data.http.as_ref(),
+                serenity::CreateMessage::default().embed(embed),
+            )
+            .await;
     }
 }
 
@@ -130,24 +124,24 @@ pub async fn track_exception(
         event.track.info.title, event.exception
     );
 
-    if let Some(player) = client.get_player_context(event.guild_id) {
-        if let Ok(data) = player.data::<PlayerData>() {
-            let embed = serenity::CreateEmbed::default()
-                .title("<:forbidden2:1459603724895780970> Playback Error")
-                .description(format!(
-                    "Failed to play **{} - {}**\n\nError: {}",
-                    event.track.info.author, event.track.info.title, event.exception.message
-                ))
-                .color(COLOR_ERROR);
+    if let Some(player) = client.get_player_context(event.guild_id)
+        && let Ok(data) = player.data::<PlayerData>()
+    {
+        let embed = serenity::CreateEmbed::default()
+            .title("<:forbidden2:1459603724895780970> Playback Error")
+            .description(format!(
+                "Failed to play **{} - {}**\n\nError: {}",
+                event.track.info.author, event.track.info.title, event.exception.message
+            ))
+            .color(COLOR_ERROR);
 
-            let _ = data
-                .channel_id
-                .send_message(
-                    data.http.as_ref(),
-                    serenity::CreateMessage::default().embed(embed),
-                )
-                .await;
-        }
+        let _ = data
+            .channel_id
+            .send_message(
+                data.http.as_ref(),
+                serenity::CreateMessage::default().embed(embed),
+            )
+            .await;
     }
 }
 

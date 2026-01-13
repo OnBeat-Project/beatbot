@@ -13,10 +13,8 @@ pub async fn resume(ctx: Context<'_>) -> Result<(), Error> {
     let guild_id = ctx.guild_id().unwrap();
     let is_dj_or_admin = permissions::check_dj_or_admin(ctx).await?;
     let check_in_voice = permissions::check_in_voice(ctx).await?;
-    let error_emoji =
-        crate::utils::emojis::get_emoji(ctx.serenity_context(), "cross").await;
-    let success_emoji =
-        crate::utils::emojis::get_emoji(ctx.serenity_context(), "check").await;
+    let error_emoji = crate::utils::emojis::get_emoji(ctx.serenity_context(), "cross").await;
+    let success_emoji = crate::utils::emojis::get_emoji(ctx.serenity_context(), "check").await;
     let lava_client = ctx.data().lavalink.clone();
 
     if !is_dj_or_admin {
