@@ -131,17 +131,18 @@ async fn apply(
 /// List all available filters
 #[poise::command(slash_command)]
 async fn list(ctx: Context<'_>) -> Result<(), Error> {
-    let mut description = String::new();
+    let description = FilterPreset::all_presets()
+        .into_iter()
+        .map(|preset| {
+            format!(
+                "{} **{}**\n{}\n\n",
+                preset.emoji(),
+                preset.name(),
+                preset.description()
+            )
+        })
+        .collect::<String>();
     let filter_emoji = get_emoji(ctx.serenity_context(), "filter").await;
-
-    for preset in FilterPreset::all_presets() {
-        description.push_str(&format!(
-            "{} **{}**\n{}\n\n",
-            preset.emoji(),
-            preset.name(),
-            preset.description()
-        ));
-    }
 
     let embed = serenity::CreateEmbed::default()
         .title(format!(
@@ -259,10 +260,10 @@ async fn custom(
         });
 
         if let Some(s) = speed {
-            changes.push(format!("Speed: {:.2}x", s));
+            changes.push(format!("Speed: {s:.2}x"));
         }
         if let Some(p) = pitch {
-            changes.push(format!("Pitch: {:.2}x", p));
+            changes.push(format!("Pitch: {p:.2}x"));
         }
     }
 
@@ -274,7 +275,7 @@ async fn custom(
             for i in 0..4 {
                 bands.push((i, clamped));
             }
-            changes.push(format!("Bass: {:+.2}", clamped));
+            changes.push(format!("Bass: {clamped:+.2}"));
         }
 
         if let Some(treble_gain) = treble {
@@ -282,7 +283,7 @@ async fn custom(
             for i in 10..15 {
                 bands.push((i, clamped));
             }
-            changes.push(format!("Treble: {:+.2}", clamped));
+            changes.push(format!("Treble: {clamped:+.2}"));
         }
 
         let equalizer_bands: Vec<lavalink_rs::model::player::Equalizer> = bands
