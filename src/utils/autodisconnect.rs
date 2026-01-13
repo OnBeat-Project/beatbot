@@ -149,7 +149,7 @@ impl AutoDisconnectManager {
             members_in_channel.is_empty()
                 || members_in_channel
                     .iter()
-                    .all(|(user_id, _)| cache.user(**user_id).map(|u| u.bot).unwrap_or(false))
+                    .all(|(user_id, _)| cache.user(**user_id).map(|u| u.bot).unwrap_or_default())
         } else {
             false
         }

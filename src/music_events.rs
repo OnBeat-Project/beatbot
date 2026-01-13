@@ -56,7 +56,7 @@ pub async fn track_start(client: LavalinkClient, _session_id: String, event: &ev
             .user_data
             .as_ref()
             .and_then(|d| d["requester_id"].as_u64())
-            .unwrap_or(0);
+            .unwrap_or_default();
 
         let embed = AnnouncementBuilder::now_playing(&event.track, requester_id);
 
