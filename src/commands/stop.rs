@@ -11,8 +11,8 @@ use poise::serenity_prelude as serenity;
 #[poise::command(slash_command, prefix_command)]
 pub async fn stop(ctx: Context<'_>) -> Result<(), Error> {
     let guild_id = ctx.guild_id().unwrap();
-    let error_emoji = get_emoji(ctx.serenity_context(), "error".to_string()).await;
-    let stop_emoji = get_emoji(ctx.serenity_context(), "disc".to_string()).await;
+    let error_emoji = get_emoji(ctx.serenity_context(), "error").await;
+    let stop_emoji = get_emoji(ctx.serenity_context(), "disc").await;
 
     let lava_client = ctx.data().lavalink.clone();
 

@@ -45,7 +45,7 @@ async fn apply(
     #[autocomplete = "filter_autocomplete"]
     preset: String,
 ) -> Result<(), Error> {
-    let error_emoji = get_emoji(ctx.serenity_context(), "error".to_string()).await;
+    let error_emoji = get_emoji(ctx.serenity_context(), "error").await;
 
     if !permissions::check_dj_or_admin(ctx).await? {
         let embed = serenity::CreateEmbed::default()
@@ -132,7 +132,7 @@ async fn apply(
 #[poise::command(slash_command)]
 async fn list(ctx: Context<'_>) -> Result<(), Error> {
     let mut description = String::new();
-    let filter_emoji = get_emoji(ctx.serenity_context(), "filter".to_string()).await;
+    let filter_emoji = get_emoji(ctx.serenity_context(), "filter").await;
 
     for preset in FilterPreset::all_presets() {
         description.push_str(&format!(
@@ -161,8 +161,8 @@ async fn list(ctx: Context<'_>) -> Result<(), Error> {
 /// Remove all filters
 #[poise::command(slash_command)]
 async fn clear(ctx: Context<'_>) -> Result<(), Error> {
-    let error_emoji = get_emoji(ctx.serenity_context(), "error".to_string()).await;
-    let check_emoji = get_emoji(ctx.serenity_context(), "check".to_string()).await;
+    let error_emoji = get_emoji(ctx.serenity_context(), "error").await;
+    let check_emoji = get_emoji(ctx.serenity_context(), "check").await;
 
     if !permissions::check_dj_or_admin(ctx).await? {
         let embed = serenity::CreateEmbed::default()
@@ -207,8 +207,8 @@ async fn custom(
     #[description = "Bass gain (-0.25 to 1.0)"] bass: Option<f64>,
     #[description = "Treble gain (-0.25 to 1.0)"] treble: Option<f64>,
 ) -> Result<(), Error> {
-    let error_emoji = get_emoji(ctx.serenity_context(), "error".to_string()).await;
-    let check_emoji = get_emoji(ctx.serenity_context(), "check".to_string()).await;
+    let error_emoji = get_emoji(ctx.serenity_context(), "error").await;
+    let check_emoji = get_emoji(ctx.serenity_context(), "check").await;
 
     if !permissions::check_dj_or_admin(ctx).await? {
         let embed = serenity::CreateEmbed::default()

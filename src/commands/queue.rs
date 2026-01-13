@@ -10,7 +10,7 @@ pub async fn queue(ctx: Context<'_>) -> Result<(), Error> {
     let guild_id = ctx.guild_id().unwrap();
     let lava_client = ctx.data().lavalink.clone();
     let album_emoji =
-        crate::utils::emojis::get_emoji(ctx.serenity_context(), "album".to_string()).await;
+        crate::utils::emojis::get_emoji(ctx.serenity_context(), "album").await;
     let player = match lava_client.get_player_context(guild_id) {
         Some(p) => p,
         None => {

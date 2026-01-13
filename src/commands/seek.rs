@@ -16,8 +16,8 @@ pub async fn seek(
 
     let lava_client = ctx.data().lavalink.clone();
     let error_emoji =
-        crate::utils::emojis::get_emoji(ctx.serenity_context(), "cross".to_string()).await;
-    let clock_emoji = crate::utils::emojis::get_emoji(ctx.serenity_context(), "clock".to_string());
+        crate::utils::emojis::get_emoji(ctx.serenity_context(), "cross").await;
+    let clock_emoji = crate::utils::emojis::get_emoji(ctx.serenity_context(), "clock");
     let Some(player) = lava_client.get_player_context(guild_id) else {
         let embed = serenity::CreateEmbed::default()
             .title(format!("{} Not Connected", error_emoji.unwrap_or_default()))

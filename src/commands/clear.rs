@@ -9,9 +9,9 @@ use poise::serenity_prelude as serenity;
 pub async fn clear(ctx: Context<'_>) -> Result<(), Error> {
     let guild_id = ctx.guild_id().unwrap();
     let error_emoji =
-        crate::utils::emojis::get_emoji(ctx.serenity_context(), "cross".to_string()).await;
+        crate::utils::emojis::get_emoji(ctx.serenity_context(), "cross").await;
     let playlist_emoji =
-        crate::utils::emojis::get_emoji(ctx.serenity_context(), "album".to_string()).await;
+        crate::utils::emojis::get_emoji(ctx.serenity_context(), "album").await;
     let lava_client = ctx.data().lavalink.clone();
 
     let Some(player) = lava_client.get_player_context(guild_id) else {

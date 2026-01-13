@@ -16,9 +16,9 @@ pub async fn volume(
     let guild_id = ctx.guild_id().unwrap();
     let lava_client = ctx.data().lavalink.clone();
     let error_emoji =
-        crate::utils::emojis::get_emoji(ctx.serenity_context(), "cross".to_string()).await;
+        crate::utils::emojis::get_emoji(ctx.serenity_context(), "cross").await;
     let vol_emoji =
-        crate::utils::emojis::get_emoji(ctx.serenity_context(), "vol3".to_string()).await;
+        crate::utils::emojis::get_emoji(ctx.serenity_context(), "vol3").await;
     let Some(player) = lava_client.get_player_context(guild_id) else {
         let embed = serenity::CreateEmbed::default()
             .title(format!("{} Not Connected", error_emoji.unwrap_or_default()))

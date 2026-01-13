@@ -23,11 +23,11 @@ pub async fn join(ctx: Context<'_>) -> Result<(), Error> {
             .and_then(|vs| vs.channel_id)
     });
     let error_emoji =
-        crate::utils::emojis::get_emoji(ctx.serenity_context(), "cross".to_string()).await;
+        crate::utils::emojis::get_emoji(ctx.serenity_context(), "cross").await;
     let success_emoji =
-        crate::utils::emojis::get_emoji(ctx.serenity_context(), "check".to_string()).await;
+        crate::utils::emojis::get_emoji(ctx.serenity_context(), "check").await;
     let alert_emoji =
-        crate::utils::emojis::get_emoji(ctx.serenity_context(), "caution".to_string()).await;
+        crate::utils::emojis::get_emoji(ctx.serenity_context(), "caution").await;
     if user_voice.is_none() {
         let embed = serenity::CreateEmbed::default()
             .title(format!("{} Cannot Join", error_emoji.unwrap_or_default()))
