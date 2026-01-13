@@ -1,3 +1,5 @@
+use std::str::FromStr;
+
 use lavalink_rs::model::player::{Filters, Karaoke, Rotation, Timescale};
 use serde::{Deserialize, Serialize};
 
@@ -277,5 +279,28 @@ impl FilterPreset {
             Self::Rock => "<:fire:1460010340862656616>",
             Self::Clear => "<:stars:1460010000784298147>",
         }
+    }
+}
+
+impl FromStr for FilterPreset {
+    type Err = crate::Error;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        Ok(match s {
+            "bass_boost" => Self::Bassboost,
+            "nightcore" => Self::Nightcore,
+            "vaporwave" => Self::Vaporwave,
+            "8d_audio" => Self::EightD,
+            "karaoke" => Self::Karaoke,
+            "treble_boost" => Self::Treble,
+            "vibrato" => Self::Vibrato,
+            "tremolo" => Self::Tremolo,
+            "pop" => Self::Pop,
+            "soft" => Self::Soft,
+            "electronic" => Self::Electronic,
+            "rock" => Self::Rock,
+            "clear_(no_filters)" => Self::Clear,
+            _ => return Err("Invalid filter preset".into()),
+        })
     }
 }

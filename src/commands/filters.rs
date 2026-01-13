@@ -92,23 +92,7 @@ async fn apply(
         .get_player_context(guild_id)
         .ok_or("Not connected to voice channel")?;
 
-    let filter_preset = match preset.as_str() {
-        "bass_boost" => FilterPreset::Bassboost,
-        "nightcore" => FilterPreset::Nightcore,
-        "vaporwave" => FilterPreset::Vaporwave,
-        "8d_audio" => FilterPreset::EightD,
-        "karaoke" => FilterPreset::Karaoke,
-        "treble_boost" => FilterPreset::Treble,
-        "vibrato" => FilterPreset::Vibrato,
-        "tremolo" => FilterPreset::Tremolo,
-        "pop" => FilterPreset::Pop,
-        "soft" => FilterPreset::Soft,
-        "electronic" => FilterPreset::Electronic,
-        "rock" => FilterPreset::Rock,
-        "clear_(no_filters)" => FilterPreset::Clear,
-        _ => return Err("Invalid filter preset".into()),
-    };
-
+    let filter_preset = preset.parse::<FilterPreset>()?;
     let filters = filter_preset.to_filters();
     player.set_filters(filters).await?;
 
