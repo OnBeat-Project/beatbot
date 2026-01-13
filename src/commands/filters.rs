@@ -14,7 +14,7 @@ async fn filter_autocomplete(
     _ctx: Context<'_>,
     partial: &str,
 ) -> Vec<serenity::AutocompleteChoice> {
-    FilterPreset::all_presets()
+    FilterPreset::ALL
         .iter()
         .filter(|preset| {
             preset
@@ -131,7 +131,7 @@ async fn apply(
 /// List all available filters
 #[poise::command(slash_command)]
 async fn list(ctx: Context<'_>) -> Result<(), Error> {
-    let description = FilterPreset::all_presets()
+    let description = FilterPreset::ALL
         .into_iter()
         .map(|preset| {
             format!(

@@ -25,6 +25,22 @@ pub enum FilterPreset {
 }
 
 impl FilterPreset {
+    pub const ALL: [Self; 13] = [
+        Self::Bassboost,
+        Self::Nightcore,
+        Self::Vaporwave,
+        Self::EightD,
+        Self::Karaoke,
+        Self::Treble,
+        Self::Vibrato,
+        Self::Tremolo,
+        Self::Pop,
+        Self::Soft,
+        Self::Electronic,
+        Self::Rock,
+        Self::Clear,
+    ];
+
     pub fn to_filters(&self) -> Filters {
         match self {
             Self::Bassboost => Self::bassboost(),
@@ -261,23 +277,5 @@ impl FilterPreset {
             Self::Rock => "<:fire:1460010340862656616>",
             Self::Clear => "<:stars:1460010000784298147>",
         }
-    }
-
-    pub fn all_presets() -> Vec<Self> {
-        vec![
-            Self::Bassboost,
-            Self::Nightcore,
-            Self::Vaporwave,
-            Self::EightD,
-            Self::Karaoke,
-            Self::Treble,
-            Self::Vibrato,
-            Self::Tremolo,
-            Self::Pop,
-            Self::Soft,
-            Self::Electronic,
-            Self::Rock,
-            Self::Clear,
-        ]
     }
 }
