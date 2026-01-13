@@ -70,7 +70,7 @@ pub async fn remove(
             "{} Track removed successfully",
             success_emoji.unwrap_or_default()
         ))
-        .description(format!("Removed {} from queue", track_name))
+        .description(format!("Removed {track_name} from queue"))
         .color(COLOR_SUCCESS);
 
     let _ = ctx.send(poise::CreateReply::default().embed(embed));

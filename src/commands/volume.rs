@@ -31,7 +31,7 @@ pub async fn volume(
 
     let embed = serenity::CreateEmbed::default()
         .title(format!("{} Volume set", vol_emoji.unwrap_or_default()))
-        .description(format!("Volume set to {}%", vol))
+        .description(format!("Volume set to {vol}%"))
         .color(COLOR_INFO);
     ctx.send(poise::CreateReply::default().embed(embed)).await?;
 

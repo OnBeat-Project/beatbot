@@ -24,7 +24,7 @@ async fn filter_autocomplete(
         })
         .map(|preset| {
             serenity::AutocompleteChoice::new(
-                format!("{}", preset.name()),
+                preset.name().to_string(),
                 preset.name().to_lowercase().replace(" ", "_"),
             )
         })

@@ -18,10 +18,10 @@ impl AnnouncementBuilder {
                 "**[{} - {}]({})**",
                 track.info.author,
                 track.info.title,
-                track.info.uri.as_ref().unwrap_or(&String::from("#"))
+                track.info.uri.as_deref().unwrap_or("#")
             ))
             .field("Duration", duration, true)
-            .field("Requested by", format!("<@{}>", requester_id), true)
+            .field("Requested by", format!("<@{requester_id}>"), true)
             .color(COLOR_INFO)
             .timestamp(serenity::Timestamp::now());
 
@@ -49,11 +49,11 @@ impl AnnouncementBuilder {
                 "**[{} - {}]({})**",
                 track.info.author,
                 track.info.title,
-                track.info.uri.as_ref().unwrap_or(&String::from("#"))
+                track.info.uri.as_deref().unwrap_or("#")
             ))
             .field("Duration", duration, true)
-            .field("Position", format!("#{}", position), true)
-            .field("Requested by", format!("<@{}>", requester_id), true)
+            .field("Position", format!("#{position}"), true)
+            .field("Requested by", format!("<@{requester_id}>"), true)
             .color(COLOR_INFO)
             .timestamp(serenity::Timestamp::now());
 
@@ -79,9 +79,9 @@ impl AnnouncementBuilder {
     ) -> serenity::CreateEmbed {
         serenity::CreateEmbed::default()
             .title("<:album:1459594793394114743> Playlist Added")
-            .description(format!("**{}**", name))
+            .description(format!("**{name}**"))
             .field("Tracks Added", track_count.to_string(), true)
-            .field("Requested by", format!("<@{}>", requester_id), true)
+            .field("Requested by", format!("<@{requester_id}>"), true)
             .color(COLOR_INFO)
             .timestamp(serenity::Timestamp::now())
     }
@@ -93,9 +93,9 @@ fn format_duration(ms: u64) -> String {
     let hours = minutes / 60;
 
     if hours > 0 {
-        format!("{}:{:02}:{:02}", hours, minutes % 60, seconds % 60)
+        format!("{hours}:{:02}:{:02}", minutes % 60, seconds % 60)
     } else {
-        format!("{}:{:02}", minutes, seconds % 60)
+        format!("{minutes}:{:02}", seconds % 60)
     }
 }
 

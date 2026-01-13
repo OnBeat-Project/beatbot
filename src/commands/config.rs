@@ -35,12 +35,12 @@ pub async fn view(ctx: Context<'_>) -> Result<(), Error> {
     let config = queries::get_guild_config(db, guild_id).await?;
 
     let dj_role = if let Some(role_id) = config.dj_role_id {
-        format!("<@&{}>", role_id)
+        format!("<@&{role_id}>")
     } else {
         "Not set (Everyone can use music commands)".to_string()
     };
     let announce_channel = if let Some(channel_id) = config.announce_channel_id {
-        format!("<#{}>", channel_id)
+        format!("<#{channel_id}>")
     } else {
         "Current channel".to_string()
     };
@@ -121,7 +121,7 @@ async fn volume(
             "{} Default Volume Updated",
             volume_emoji.unwrap_or_default()
         ))
-        .description(format!("New tracks will play at {}%", vol))
+        .description(format!("New tracks will play at {vol}%"))
         .color(COLOR_SUCCESS);
 
     ctx.send(poise::CreateReply::default().embed(embed)).await?;
@@ -219,7 +219,7 @@ async fn maxqueue(
             "{} Max Queue Length Updated",
             album_emoji.unwrap_or_default()
         ))
-        .description(format!("Queue can now hold up to {} tracks", length))
+        .description(format!("Queue can now hold up to {length} tracks"))
         .color(COLOR_SUCCESS);
 
     ctx.send(poise::CreateReply::default().embed(embed)).await?;

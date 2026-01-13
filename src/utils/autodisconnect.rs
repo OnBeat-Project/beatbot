@@ -94,8 +94,8 @@ impl AutoDisconnectManager {
                             // Only disconnect if still inactive
                             if player_data.track.is_none() && queue_count == 0 {
                                 info!(
-                                    "Auto-disconnect: Disconnecting from guild {} after {} seconds of inactivity",
-                                    self.guild_id, disconnect_time
+                                    "Auto-disconnect: Disconnecting from guild {} after {disconnect_time} seconds of inactivity",
+                                    self.guild_id
                                 );
 
                                 let manager = match songbird::get(&self.ctx).await {

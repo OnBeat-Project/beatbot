@@ -33,9 +33,8 @@ pub async fn seek(
         player.set_position(Duration::from_secs(time)).await?;
         let embed = serenity::CreateEmbed::default()
             .title(format!(
-                "{} Jumped to {}s",
+                "{} Jumped to {time}s",
                 clock_emoji.await.unwrap_or_default(),
-                time
             ))
             .color(COLOR_SUCCESS);
 

@@ -63,8 +63,7 @@ pub async fn skip(ctx: Context<'_>) -> Result<(), Error> {
             .description(format!("**{} - {}**", np.info.author, np.info.title))
             .color(COLOR_SUCCESS)
             .footer(serenity::CreateEmbedFooter::new(format!(
-                "Skipped by {}",
-                author_name
+                "Skipped by {author_name}"
             )));
 
         ctx.send(poise::CreateReply::default().embed(embed)).await?;
