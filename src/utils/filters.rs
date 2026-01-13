@@ -44,68 +44,74 @@ impl FilterPreset {
     }
 
     fn bassboost() -> Filters {
-        let mut filters = Filters::default();
-        filters.equalizer = Some(equalizer_vec![
-            (0, 0.30),
-            (1, 0.30),
-            (2, 0.30),
-            (3, 0.15),
-            (4, 0.15),
-            (5, 0.15)
-        ]);
-        filters
+        Filters {
+            equalizer: Some(equalizer_vec![
+                (0, 0.30),
+                (1, 0.30),
+                (2, 0.30),
+                (3, 0.15),
+                (4, 0.15),
+                (5, 0.15)
+            ]),
+            ..Default::default()
+        }
     }
 
     fn nightcore() -> Filters {
-        let mut filters = Filters::default();
-        filters.timescale = Some(Timescale {
-            speed: Some(1.15),
-            pitch: Some(1.15),
-            rate: Some(1.0),
-        });
-        filters
+        Filters {
+            timescale: Some(Timescale {
+                speed: Some(1.15),
+                pitch: Some(1.15),
+                rate: Some(1.0),
+            }),
+            ..Default::default()
+        }
     }
 
     fn vaporwave() -> Filters {
-        let mut filters = Filters::default();
-        filters.timescale = Some(Timescale {
-            speed: Some(0.85),
-            pitch: Some(0.85),
-            rate: Some(1.0),
-        });
-        filters.equalizer = Some(equalizer_vec![(0, 0.20), (1, 0.20), (2, 0.20)]);
-        filters
+        Filters {
+            timescale: Some(Timescale {
+                speed: Some(0.85),
+                pitch: Some(0.85),
+                rate: Some(1.0),
+            }),
+            equalizer: Some(equalizer_vec![(0, 0.20), (1, 0.20), (2, 0.20)]),
+            ..Default::default()
+        }
     }
 
     fn eight_d() -> Filters {
-        let mut filters = Filters::default();
-        filters.rotation = Some(Rotation {
-            rotation_hz: Some(0.2),
-        });
-        filters
+        Filters {
+            rotation: Some(Rotation {
+                rotation_hz: Some(0.2),
+            }),
+            ..Default::default()
+        }
     }
 
     fn karaoke() -> Filters {
-        let mut filters = Filters::default();
-        filters.karaoke = Some(Karaoke {
-            level: Some(1.0),
-            mono_level: Some(1.0),
-            filter_band: Some(220.0),
-            filter_width: Some(100.0),
-        });
-        filters
+        Filters {
+            karaoke: Some(Karaoke {
+                level: Some(1.0),
+                mono_level: Some(1.0),
+                filter_band: Some(220.0),
+                filter_width: Some(100.0),
+            }),
+            ..Default::default()
+        }
     }
 
     fn treble() -> Filters {
-        let mut filters = Filters::default();
-        filters.equalizer = Some(equalizer_vec![
-            (10, 0.25),
-            (11, 0.25),
-            (12, 0.25),
-            (13, 0.25),
-            (14, 0.25)
-        ]);
-        filters
+        Filters {
+            equalizer: Some(equalizer_vec![
+                (10, 0.25),
+                (11, 0.25),
+                (12, 0.25),
+                (13, 0.25),
+                (14, 0.25)
+            ]),
+            ..Default::default()
+        }
     }
 
     fn vibrato() -> Filters {
@@ -117,86 +123,90 @@ impl FilterPreset {
     }
 
     fn pop() -> Filters {
-        let mut filters = Filters::default();
-        filters.equalizer = Some(equalizer_vec![
-            (0, -0.02),
-            (1, 0.08),
-            (2, 0.10),
-            (3, 0.10),
-            (4, 0.06),
-            (5, 0.0),
-            (6, -0.02),
-            (7, -0.02),
-            (8, 0.0),
-            (9, 0.02),
-            (10, 0.08),
-            (11, 0.10),
-            (12, 0.10),
-            (13, 0.08),
-            (14, 0.05)
-        ]);
-        filters
+        Filters {
+            equalizer: Some(equalizer_vec![
+                (0, -0.02),
+                (1, 0.08),
+                (2, 0.10),
+                (3, 0.10),
+                (4, 0.06),
+                (5, 0.0),
+                (6, -0.02),
+                (7, -0.02),
+                (8, 0.0),
+                (9, 0.02),
+                (10, 0.08),
+                (11, 0.10),
+                (12, 0.10),
+                (13, 0.08),
+                (14, 0.05)
+            ]),
+            ..Default::default()
+        }
     }
 
     fn soft() -> Filters {
-        let mut filters = Filters::default();
-        filters.equalizer = Some(equalizer_vec![
-            (0, 0.0),
-            (1, 0.0),
-            (2, 0.0),
-            (3, 0.0),
-            (4, -0.05),
-            (5, -0.10),
-            (6, -0.12),
-            (7, -0.12),
-            (8, -0.10),
-            (9, -0.08)
-        ]);
-        filters
+        Filters {
+            equalizer: Some(equalizer_vec![
+                (0, 0.0),
+                (1, 0.0),
+                (2, 0.0),
+                (3, 0.0),
+                (4, -0.05),
+                (5, -0.10),
+                (6, -0.12),
+                (7, -0.12),
+                (8, -0.10),
+                (9, -0.08)
+            ]),
+            ..Default::default()
+        }
     }
 
     fn electronic() -> Filters {
-        let mut filters = Filters::default();
-        filters.equalizer = Some(equalizer_vec![
-            (0, 0.15),
-            (1, 0.15),
-            (2, 0.10),
-            (3, 0.05),
-            (4, 0.0),
-            (5, -0.05),
-            (6, -0.05),
-            (7, 0.0),
-            (8, 0.05),
-            (9, 0.10),
-            (10, 0.15),
-            (11, 0.20),
-            (12, 0.20),
-            (13, 0.15),
-            (14, 0.10)
-        ]);
-        filters
+        Filters {
+            equalizer: Some(equalizer_vec![
+                (0, 0.15),
+                (1, 0.15),
+                (2, 0.10),
+                (3, 0.05),
+                (4, 0.0),
+                (5, -0.05),
+                (6, -0.05),
+                (7, 0.0),
+                (8, 0.05),
+                (9, 0.10),
+                (10, 0.15),
+                (11, 0.20),
+                (12, 0.20),
+                (13, 0.15),
+                (14, 0.10)
+            ]),
+            ..Default::default()
+        }
     }
 
     fn rock() -> Filters {
-        let mut filters = Filters::default();
-        filters.equalizer = Some(equalizer_vec![
-            (0, 0.15),
-            (1, 0.10),
-            (2, 0.05),
-            (3, 0.02),
-            (4, -0.02),
-            (5, -0.05),
-            (6, -0.03),
-            (7, 0.05),
-            (8, 0.10),
-            (9, 0.12),
-            (10, 0.15),
-            (11, 0.15),
-            (12, 0.12),
-            (13, 0.10),
-            (14, 0.08)
-        ]);
-        filters
+        Filters {
+            equalizer: Some(equalizer_vec![
+                (0, 0.15),
+                (1, 0.10),
+                (2, 0.05),
+                (3, 0.02),
+                (4, -0.02),
+                (5, -0.05),
+                (6, -0.03),
+                (7, 0.05),
+                (8, 0.10),
+                (9, 0.12),
+                (10, 0.15),
+                (11, 0.15),
+                (12, 0.12),
+                (13, 0.10),
+                (14, 0.08)
+            ]),
+            ..Default::default()
+        }
     }
 
     pub fn name(&self) -> &str {
