@@ -64,11 +64,11 @@ pub async fn _join(
                 );
                 auto_disconnect.start_monitoring(lava_client.clone()).await;
 
-                let stage = connect_to
+                if connect_to
                     .get_stage_instance(ctx.serenity_context().http.clone())
                     .await
-                    .is_ok();
-                if stage {
+                    .is_ok()
+                {
                     let http = ctx.serenity_context().http.clone();
                     let channels = guild_id.channels(http).await.unwrap();
                     let channel = channels.get(&channel_id.unwrap()).unwrap();
