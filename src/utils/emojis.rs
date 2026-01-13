@@ -1,6 +1,6 @@
 use poise::serenity_prelude as serenity;
 
-pub async fn get_emoji(context: &serenity::Context, name: &str) -> Option<String> {
+pub async fn get_emoji(context: &serenity::Context, input_name: &str) -> Option<String> {
     context
         .http
         .get_application_emojis()
@@ -10,6 +10,6 @@ pub async fn get_emoji(context: &serenity::Context, name: &str) -> Option<String
             emojis
                 .into_iter()
                 .map(|emoji| emoji.name)
-                .find(|name| name.as_str() == name)
+                .find(|name| name.as_str() == input_name)
         })
 }

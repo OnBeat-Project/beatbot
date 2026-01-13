@@ -64,21 +64,20 @@ pub async fn _join(
                 );
                 auto_disconnect.start_monitoring(lava_client.clone()).await;
 
-                let stage = match connect_to
+                let stage = connect_to
                     .get_stage_instance(ctx.serenity_context().http.clone())
                     .await
-                {
-                    Ok(_) => true,
-                    Err(_) => false,
-                };
+                    .is_ok();
                 if stage {
                     let http = ctx.serenity_context().http.clone();
                     let channels = guild_id.channels(http).await.unwrap();
                     let channel = channels.get(&channel_id.unwrap()).unwrap();
-                    let _ = channel.edit_own_voice_state(
-                        ctx.serenity_context().http(),
-                        EditVoiceState::new().request_to_speak(true),
-                    );
+                    let _ = channel
+                        .edit_own_voice_state(
+                            ctx.serenity_context().http(),
+                            EditVoiceState::new().request_to_speak(true),
+                        )
+                        .await;
                 }
                 return Ok(true);
             }
@@ -95,11 +94,7 @@ pub fn check_user_in_voice(ctx: &Context<'_>, guild_id: serenity::GuildId) -> Re
     let cache = ctx.cache().expect("Expected cache");
     let user_voice = cache
         .guild(guild_id)
-        .and_then(|g| {
-            g.voice_states
-                .get(&ctx.author().id)
-                .map(|vs| vs.channel_id.clone())
-        })
+        .and_then(|g| g.voice_states.get(&ctx.author().id).map(|vs| vs.channel_id))
         .flatten();
 
     let bot_voice = cache
@@ -107,7 +102,7 @@ pub fn check_user_in_voice(ctx: &Context<'_>, guild_id: serenity::GuildId) -> Re
         .and_then(|g| {
             g.voice_states
                 .get(&cache.current_user().id)
-                .map(|vs| vs.channel_id.clone())
+                .map(|vs| vs.channel_id)
         })
         .flatten();
 

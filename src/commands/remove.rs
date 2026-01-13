@@ -73,7 +73,7 @@ pub async fn remove(
         .description(format!("Removed {track_name} from queue"))
         .color(COLOR_SUCCESS);
 
-    let _ = ctx.send(poise::CreateReply::default().embed(embed));
+    let _ = ctx.send(poise::CreateReply::default().embed(embed)).await;
 
     Ok(())
 }

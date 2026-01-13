@@ -9,7 +9,7 @@ pub struct PlayerData {
 }
 
 impl PlayerData {
-    pub fn new(
+    pub const fn new(
         channel_id: serenity::ChannelId,
         http: Arc<serenity::Http>,
         db: sqlx::SqlitePool,

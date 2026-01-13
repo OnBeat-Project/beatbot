@@ -11,7 +11,11 @@ pub struct AutoDisconnectManager {
 }
 
 impl AutoDisconnectManager {
-    pub fn new(guild_id: serenity::GuildId, db: sqlx::SqlitePool, ctx: serenity::Context) -> Self {
+    pub const fn new(
+        guild_id: serenity::GuildId,
+        db: sqlx::SqlitePool,
+        ctx: serenity::Context,
+    ) -> Self {
         Self { guild_id, db, ctx }
     }
 
