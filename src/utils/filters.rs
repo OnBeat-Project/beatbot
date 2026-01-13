@@ -1,5 +1,11 @@
-use lavalink_rs::model::player::{Equalizer, Filters, Karaoke, Rotation, Timescale};
+use lavalink_rs::model::player::{Filters, Karaoke, Rotation, Timescale};
 use serde::{Deserialize, Serialize};
+
+macro_rules! equalizer_vec {
+    ($(($band:expr,$gain:expr)),*) => {
+        vec![$(lavalink_rs::model::player::Equalizer { band: $band, gain: $gain }),*]
+    };
+}
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum FilterPreset {
@@ -39,19 +45,14 @@ impl FilterPreset {
 
     fn bassboost() -> Filters {
         let mut filters = Filters::default();
-        let bands: Vec<Equalizer> = vec![
+        filters.equalizer = Some(equalizer_vec![
             (0, 0.30),
             (1, 0.30),
             (2, 0.30),
             (3, 0.15),
             (4, 0.15),
-            (5, 0.15),
-        ]
-        .into_iter()
-        .map(|(band, gain)| Equalizer { band, gain })
-        .collect();
-
-        filters.equalizer = Some(bands);
+            (5, 0.15)
+        ]);
         filters
     }
 
@@ -72,12 +73,7 @@ impl FilterPreset {
             pitch: Some(0.85),
             rate: Some(1.0),
         });
-
-        let bands: Vec<Equalizer> = vec![(0, 0.20), (1, 0.20), (2, 0.20)]
-            .into_iter()
-            .map(|(band, gain)| Equalizer { band, gain })
-            .collect();
-        filters.equalizer = Some(bands);
+        filters.equalizer = Some(equalizer_vec![(0, 0.20), (1, 0.20), (2, 0.20)]);
         filters
     }
 
@@ -102,13 +98,13 @@ impl FilterPreset {
 
     fn treble() -> Filters {
         let mut filters = Filters::default();
-        let bands: Vec<Equalizer> =
-            vec![(10, 0.25), (11, 0.25), (12, 0.25), (13, 0.25), (14, 0.25)]
-                .into_iter()
-                .map(|(band, gain)| Equalizer { band, gain })
-                .collect();
-
-        filters.equalizer = Some(bands);
+        filters.equalizer = Some(equalizer_vec![
+            (10, 0.25),
+            (11, 0.25),
+            (12, 0.25),
+            (13, 0.25),
+            (14, 0.25)
+        ]);
         filters
     }
 
@@ -122,7 +118,7 @@ impl FilterPreset {
 
     fn pop() -> Filters {
         let mut filters = Filters::default();
-        let bands: Vec<Equalizer> = vec![
+        filters.equalizer = Some(equalizer_vec![
             (0, -0.02),
             (1, 0.08),
             (2, 0.10),
@@ -137,18 +133,14 @@ impl FilterPreset {
             (11, 0.10),
             (12, 0.10),
             (13, 0.08),
-            (14, 0.05),
-        ]
-        .into_iter()
-        .map(|(band, gain)| Equalizer { band, gain })
-        .collect();
-        filters.equalizer = Some(bands);
+            (14, 0.05)
+        ]);
         filters
     }
 
     fn soft() -> Filters {
         let mut filters = Filters::default();
-        let bands: Vec<Equalizer> = vec![
+        filters.equalizer = Some(equalizer_vec![
             (0, 0.0),
             (1, 0.0),
             (2, 0.0),
@@ -158,18 +150,14 @@ impl FilterPreset {
             (6, -0.12),
             (7, -0.12),
             (8, -0.10),
-            (9, -0.08),
-        ]
-        .into_iter()
-        .map(|(band, gain)| Equalizer { band, gain })
-        .collect();
-        filters.equalizer = Some(bands);
+            (9, -0.08)
+        ]);
         filters
     }
 
     fn electronic() -> Filters {
         let mut filters = Filters::default();
-        let bands: Vec<Equalizer> = vec![
+        filters.equalizer = Some(equalizer_vec![
             (0, 0.15),
             (1, 0.15),
             (2, 0.10),
@@ -184,18 +172,14 @@ impl FilterPreset {
             (11, 0.20),
             (12, 0.20),
             (13, 0.15),
-            (14, 0.10),
-        ]
-        .into_iter()
-        .map(|(band, gain)| Equalizer { band, gain })
-        .collect();
-        filters.equalizer = Some(bands);
+            (14, 0.10)
+        ]);
         filters
     }
 
     fn rock() -> Filters {
         let mut filters = Filters::default();
-        let bands: Vec<Equalizer> = vec![
+        filters.equalizer = Some(equalizer_vec![
             (0, 0.15),
             (1, 0.10),
             (2, 0.05),
@@ -210,12 +194,8 @@ impl FilterPreset {
             (11, 0.15),
             (12, 0.12),
             (13, 0.10),
-            (14, 0.08),
-        ]
-        .into_iter()
-        .map(|(band, gain)| Equalizer { band, gain })
-        .collect();
-        filters.equalizer = Some(bands);
+            (14, 0.08)
+        ]);
         filters
     }
 
