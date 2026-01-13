@@ -30,7 +30,7 @@ pub async fn track_start(client: LavalinkClient, _session_id: String, event: &ev
     if let Some(player) = client.get_player_context(event.guild_id) {
         if let Ok(data) = player.data::<PlayerData>() {
             let config = match crate::database::queries::get_guild_config(
-                data.db.as_ref(),
+                &data.db,
                 event.guild_id.0 as i64,
             )
             .await
@@ -87,7 +87,7 @@ pub async fn track_end(client: LavalinkClient, _session_id: String, event: &even
         if let Some(player) = client.get_player_context(event.guild_id) {
             if let Ok(data) = player.data::<PlayerData>() {
                 let config = match crate::database::queries::get_guild_config(
-                    data.db.as_ref(),
+                    &data.db,
                     event.guild_id.0 as i64,
                 )
                 .await

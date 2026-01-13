@@ -80,7 +80,7 @@ async fn djrole(
     let guild_id = ctx.guild_id().ok_or("Must be in a guild")?.get() as i64;
     let db = ctx.data().database.pool();
     let success_emoji = get_emoji(ctx.serenity_context(), "check").await;
-    let role_id = role.clone().map(|r| r.id.get() as i64);
+    let role_id = role.as_ref().map(|r| r.id.get() as i64);
     queries::update_dj_role(db, guild_id, role_id).await?;
 
     let description = if let Some(r) = role {
@@ -173,7 +173,7 @@ async fn announce(
     let guild_id = ctx.guild_id().ok_or("Must be in a guild")?.get() as i64;
     let db = ctx.data().database.pool();
 
-    let channel_id = channel.clone().map(|c| c.id.get() as i64);
+    let channel_id = channel.as_ref().map(|c| c.id.get() as i64);
     queries::update_announce_settings(db, guild_id, enabled, channel_id).await?;
 
     let description = if enabled {
