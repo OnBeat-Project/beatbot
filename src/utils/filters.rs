@@ -27,19 +27,19 @@ pub enum FilterPreset {
 impl FilterPreset {
     pub fn to_filters(&self) -> Filters {
         match self {
-            FilterPreset::Bassboost => Self::bassboost(),
-            FilterPreset::Nightcore => Self::nightcore(),
-            FilterPreset::Vaporwave => Self::vaporwave(),
-            FilterPreset::EightD => Self::eight_d(),
-            FilterPreset::Karaoke => Self::karaoke(),
-            FilterPreset::Treble => Self::treble(),
-            FilterPreset::Vibrato => Self::vibrato(),
-            FilterPreset::Tremolo => Self::tremolo(),
-            FilterPreset::Pop => Self::pop(),
-            FilterPreset::Soft => Self::soft(),
-            FilterPreset::Electronic => Self::electronic(),
-            FilterPreset::Rock => Self::rock(),
-            FilterPreset::Clear => Filters::default(),
+            Self::Bassboost => Self::bassboost(),
+            Self::Nightcore => Self::nightcore(),
+            Self::Vaporwave => Self::vaporwave(),
+            Self::EightD => Self::eight_d(),
+            Self::Karaoke => Self::karaoke(),
+            Self::Treble => Self::treble(),
+            Self::Vibrato => Self::vibrato(),
+            Self::Tremolo => Self::tremolo(),
+            Self::Pop => Self::pop(),
+            Self::Soft => Self::soft(),
+            Self::Electronic => Self::electronic(),
+            Self::Rock => Self::rock(),
+            Self::Clear => Filters::default(),
         }
     }
 
@@ -209,75 +209,75 @@ impl FilterPreset {
         }
     }
 
-    pub fn name(&self) -> &str {
+    pub const fn name(&self) -> &str {
         match self {
-            FilterPreset::Bassboost => "Bass Boost",
-            FilterPreset::Nightcore => "Nightcore",
-            FilterPreset::Vaporwave => "Vaporwave",
-            FilterPreset::EightD => "8D Audio",
-            FilterPreset::Karaoke => "Karaoke",
-            FilterPreset::Treble => "Treble Boost",
-            FilterPreset::Vibrato => "Vibrato",
-            FilterPreset::Tremolo => "Tremolo",
-            FilterPreset::Pop => "Pop",
-            FilterPreset::Soft => "Soft",
-            FilterPreset::Electronic => "Electronic",
-            FilterPreset::Rock => "Rock",
-            FilterPreset::Clear => "Clear (No Filters)",
+            Self::Bassboost => "Bass Boost",
+            Self::Nightcore => "Nightcore",
+            Self::Vaporwave => "Vaporwave",
+            Self::EightD => "8D Audio",
+            Self::Karaoke => "Karaoke",
+            Self::Treble => "Treble Boost",
+            Self::Vibrato => "Vibrato",
+            Self::Tremolo => "Tremolo",
+            Self::Pop => "Pop",
+            Self::Soft => "Soft",
+            Self::Electronic => "Electronic",
+            Self::Rock => "Rock",
+            Self::Clear => "Clear (No Filters)",
         }
     }
 
-    pub fn description(&self) -> &str {
+    pub const fn description(&self) -> &str {
         match self {
-            FilterPreset::Bassboost => "Amplifies low frequencies for extra bass",
-            FilterPreset::Nightcore => "Increases speed and pitch for that nightcore feel",
-            FilterPreset::Vaporwave => "Slows down speed and pitch for a dreamy vibe",
-            FilterPreset::EightD => "Creates a rotating audio effect around your head",
-            FilterPreset::Karaoke => "Reduces vocals for karaoke sessions",
-            FilterPreset::Treble => "Amplifies high frequencies",
-            FilterPreset::Vibrato => "Adds a vibrating pitch effect",
-            FilterPreset::Tremolo => "Adds a trembling volume effect",
-            FilterPreset::Pop => "Optimized for pop music",
-            FilterPreset::Soft => "Reduces harsh frequencies for a softer sound",
-            FilterPreset::Electronic => "Enhanced for electronic/EDM music",
-            FilterPreset::Rock => "Optimized for rock music",
-            FilterPreset::Clear => "Removes all audio filters",
+            Self::Bassboost => "Amplifies low frequencies for extra bass",
+            Self::Nightcore => "Increases speed and pitch for that nightcore feel",
+            Self::Vaporwave => "Slows down speed and pitch for a dreamy vibe",
+            Self::EightD => "Creates a rotating audio effect around your head",
+            Self::Karaoke => "Reduces vocals for karaoke sessions",
+            Self::Treble => "Amplifies high frequencies",
+            Self::Vibrato => "Adds a vibrating pitch effect",
+            Self::Tremolo => "Adds a trembling volume effect",
+            Self::Pop => "Optimized for pop music",
+            Self::Soft => "Reduces harsh frequencies for a softer sound",
+            Self::Electronic => "Enhanced for electronic/EDM music",
+            Self::Rock => "Optimized for rock music",
+            Self::Clear => "Removes all audio filters",
         }
     }
 
-    pub fn emoji(&self) -> &str {
+    pub const fn emoji(&self) -> &str {
         match self {
-            FilterPreset::Bassboost => "<:vol3:1459594782920671373>",
-            FilterPreset::Nightcore => "<:thunder:1460010342095524048>",
-            FilterPreset::Vaporwave => "<:cloud:1460010003594481946>",
-            FilterPreset::EightD => "<:headphones:1459594791577714738>",
-            FilterPreset::Karaoke => "<:song:1459594788998348875>",
-            FilterPreset::Treble => "<:musicnotes:1459594797634293811>",
-            FilterPreset::Vibrato => "<:star:1460009999513161914>",
-            FilterPreset::Tremolo => "<:magnet:1460010859521773628>",
-            FilterPreset::Pop => "<:musicnotes:1459594797634293811>",
-            FilterPreset::Soft => "<:sprout:1460010703728676994>",
-            FilterPreset::Electronic => "<:thunder:1460010342095524048>",
-            FilterPreset::Rock => "<:fire:1460010340862656616>",
-            FilterPreset::Clear => "<:stars:1460010000784298147>",
+            Self::Bassboost => "<:vol3:1459594782920671373>",
+            Self::Nightcore => "<:thunder:1460010342095524048>",
+            Self::Vaporwave => "<:cloud:1460010003594481946>",
+            Self::EightD => "<:headphones:1459594791577714738>",
+            Self::Karaoke => "<:song:1459594788998348875>",
+            Self::Treble => "<:musicnotes:1459594797634293811>",
+            Self::Vibrato => "<:star:1460009999513161914>",
+            Self::Tremolo => "<:magnet:1460010859521773628>",
+            Self::Pop => "<:musicnotes:1459594797634293811>",
+            Self::Soft => "<:sprout:1460010703728676994>",
+            Self::Electronic => "<:thunder:1460010342095524048>",
+            Self::Rock => "<:fire:1460010340862656616>",
+            Self::Clear => "<:stars:1460010000784298147>",
         }
     }
 
-    pub fn all_presets() -> Vec<FilterPreset> {
+    pub fn all_presets() -> Vec<Self> {
         vec![
-            FilterPreset::Bassboost,
-            FilterPreset::Nightcore,
-            FilterPreset::Vaporwave,
-            FilterPreset::EightD,
-            FilterPreset::Karaoke,
-            FilterPreset::Treble,
-            FilterPreset::Vibrato,
-            FilterPreset::Tremolo,
-            FilterPreset::Pop,
-            FilterPreset::Soft,
-            FilterPreset::Electronic,
-            FilterPreset::Rock,
-            FilterPreset::Clear,
+            Self::Bassboost,
+            Self::Nightcore,
+            Self::Vaporwave,
+            Self::EightD,
+            Self::Karaoke,
+            Self::Treble,
+            Self::Vibrato,
+            Self::Tremolo,
+            Self::Pop,
+            Self::Soft,
+            Self::Electronic,
+            Self::Rock,
+            Self::Clear,
         ]
     }
 }
