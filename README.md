@@ -225,12 +225,10 @@ If you need help or have questions:
 ## 🗺️ Roadmap
 
 - [x] Queue viewing command
-~~- [ ] Loop/repeat functionality~~
 - [x] Volume control
 - [x] Song seeking
 - [ ] Lyrics display
 - [x] DJ role permissions
-- [ ] Web dashboard
 - [ ] More music sources (SoundCloud, Apple Music)
 
 ---
