@@ -3,8 +3,8 @@ use crate::{
     database::queries,
     utils::{autodisconnect::AutoDisconnectManager, player_data::PlayerData},
 };
-use poise::serenity_prelude as serenity;
 use ::serenity::all::{CacheHttp, EditVoiceState};
+use poise::serenity_prelude as serenity;
 use std::{ops::Deref, sync::Arc};
 
 pub async fn _join(
@@ -64,15 +64,21 @@ pub async fn _join(
                 );
                 auto_disconnect.start_monitoring(lava_client.clone()).await;
 
-                let stage = match connect_to.get_stage_instance(ctx.serenity_context().http.clone()).await {
+                let stage = match connect_to
+                    .get_stage_instance(ctx.serenity_context().http.clone())
+                    .await
+                {
                     Ok(_) => true,
-                    Err(_) => false
+                    Err(_) => false,
                 };
                 if stage {
                     let http = ctx.serenity_context().http.clone();
                     let channels = guild_id.channels(http).await.unwrap();
                     let channel = channels.get(&channel_id.unwrap()).unwrap();
-                    let _ = channel.edit_own_voice_state(ctx.serenity_context().http(), EditVoiceState::default().request_to_speak(true));
+                    let _ = channel.edit_own_voice_state(
+                        ctx.serenity_context().http(),
+                        EditVoiceState::new().request_to_speak(true),
+                    );
                 }
                 return Ok(true);
             }

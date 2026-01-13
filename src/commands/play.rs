@@ -101,7 +101,7 @@ pub async fn play(
         ctx.send(poise::CreateReply::default().embed(embed)).await?;
         return Ok(());
     };
-    
+
     let query = if term.starts_with("http") {
         term
     } else {
