@@ -224,6 +224,7 @@ If you need help or have questions:
 
 ## 🗺️ Roadmap
 
+- [ ] Stage support
 - [x] Queue viewing command
 - [x] Volume control
 - [x] Song seeking
