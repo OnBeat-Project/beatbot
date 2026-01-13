@@ -40,20 +40,20 @@ pub async fn queue(ctx: Context<'_>) -> Result<(), Error> {
             tracks_desc.push_str(&format!("{}. {}\n", idx + 1, track.track.info.title));
         }
     }
+    if max > 9 {
+        tracks_desc.push_str(&format!(
+            "and more {} tracks",
+            queue.get_count().await.unwrap_or_default() - 9
+        ));
+    }
     let queue_list = if tracks_desc.is_empty() {
         "Queue is empty".to_string()
     } else {
         tracks_desc
     };
-
     let embed = serenity::CreateEmbed::default()
         .title(format!("{} Queue", album_emoji.unwrap_or_default()))
-        .description(format!(
-            "{}**On Queue**:\n{}\nand more {} tracks",
-            now_playing,
-            queue_list,
-            queue.get_count().await.unwrap_or_default() - 9
-        ))
+        .description(format!("{}**On Queue**:\n{}", now_playing, queue_list))
         .color(COLOR_INFO);
 
     ctx.send(poise::CreateReply::default().embed(embed)).await?;

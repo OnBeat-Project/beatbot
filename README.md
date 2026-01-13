@@ -225,7 +225,7 @@ If you need help or have questions:
 ## 🗺️ Roadmap
 
 - [x] Queue viewing command
-- [ ] Loop/repeat functionality
+~~- [ ] Loop/repeat functionality~~
 - [x] Volume control
 - [x] Song seeking
 - [ ] Lyrics display
