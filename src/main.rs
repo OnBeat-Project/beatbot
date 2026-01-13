@@ -125,6 +125,7 @@ async fn main() -> Result<(), Error> {
 
                 let hostname = env::var("LAVA_HOST").expect("LAVA_HOST not set");
                 let password = env::var("LAVA_PASSWORD").expect("LAVA_PASSWORD not set");
+                let session_id = env::var("SESSION_ID").expect("SESSION_ID not set");
 
                 let node_local = NodeBuilder {
                     hostname,
@@ -132,7 +133,7 @@ async fn main() -> Result<(), Error> {
                     events: events::Events::default(),
                     password,
                     user_id: ctx.cache.current_user().id.into(),
-                    session_id: None,
+                    session_id: Some(session_id),
                 };
 
                 let client = LavalinkClient::new(
