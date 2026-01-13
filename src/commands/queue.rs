@@ -9,8 +9,7 @@ use poise::serenity_prelude as serenity;
 pub async fn queue(ctx: Context<'_>) -> Result<(), Error> {
     let guild_id = ctx.guild_id().unwrap();
     let lava_client = ctx.data().lavalink.clone();
-    let album_emoji =
-        crate::utils::emojis::get_emoji(ctx.serenity_context(), "album".to_string()).await;
+    let album_emoji = crate::utils::emojis::get_emoji(ctx.serenity_context(), "album").await;
     let player = match lava_client.get_player_context(guild_id) {
         Some(p) => p,
         None => {
@@ -53,7 +52,7 @@ pub async fn queue(ctx: Context<'_>) -> Result<(), Error> {
     };
     let embed = serenity::CreateEmbed::default()
         .title(format!("{} Queue", album_emoji.unwrap_or_default()))
-        .description(format!("{}**On Queue**:\n{}", now_playing, queue_list))
+        .description(format!("{now_playing}**On Queue**:\n{queue_list}"))
         .color(COLOR_INFO);
 
     ctx.send(poise::CreateReply::default().embed(embed)).await?;

@@ -1,5 +1,4 @@
 use poise::serenity_prelude as serenity;
-use std::sync::Arc;
 use std::time::Duration;
 use tokio::time::sleep;
 
@@ -7,14 +6,14 @@ use crate::database::queries;
 
 pub struct AutoDisconnectManager {
     guild_id: serenity::GuildId,
-    db: Arc<sqlx::SqlitePool>,
+    db: sqlx::SqlitePool,
     ctx: serenity::Context,
 }
 
 impl AutoDisconnectManager {
-    pub fn new(
+    pub const fn new(
         guild_id: serenity::GuildId,
-        db: Arc<sqlx::SqlitePool>,
+        db: sqlx::SqlitePool,
         ctx: serenity::Context,
     ) -> Self {
         Self { guild_id, db, ctx }
@@ -99,8 +98,8 @@ impl AutoDisconnectManager {
                             // Only disconnect if still inactive
                             if player_data.track.is_none() && queue_count == 0 {
                                 info!(
-                                    "Auto-disconnect: Disconnecting from guild {} after {} seconds of inactivity",
-                                    self.guild_id, disconnect_time
+                                    "Auto-disconnect: Disconnecting from guild {} after {disconnect_time} seconds of inactivity",
+                                    self.guild_id
                                 );
 
                                 let manager = match songbird::get(&self.ctx).await {
@@ -150,7 +149,7 @@ impl AutoDisconnectManager {
             members_in_channel.is_empty()
                 || members_in_channel
                     .iter()
-                    .all(|(user_id, _)| cache.user(**user_id).map(|u| u.bot).unwrap_or(false))
+                    .all(|(user_id, _)| cache.user(**user_id).map(|u| u.bot).unwrap_or_default())
         } else {
             false
         }

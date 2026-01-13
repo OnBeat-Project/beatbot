@@ -35,12 +35,12 @@ pub async fn view(ctx: Context<'_>) -> Result<(), Error> {
     let config = queries::get_guild_config(db, guild_id).await?;
 
     let dj_role = if let Some(role_id) = config.dj_role_id {
-        format!("<@&{}>", role_id)
+        format!("<@&{role_id}>")
     } else {
         "Not set (Everyone can use music commands)".to_string()
     };
     let announce_channel = if let Some(channel_id) = config.announce_channel_id {
-        format!("<#{}>", channel_id)
+        format!("<#{channel_id}>")
     } else {
         "Current channel".to_string()
     };
@@ -79,8 +79,8 @@ async fn djrole(
 ) -> Result<(), Error> {
     let guild_id = ctx.guild_id().ok_or("Must be in a guild")?.get() as i64;
     let db = ctx.data().database.pool();
-    let success_emoji = get_emoji(ctx.serenity_context(), "check".to_string()).await;
-    let role_id = role.clone().map(|r| r.id.get() as i64);
+    let success_emoji = get_emoji(ctx.serenity_context(), "check").await;
+    let role_id = role.as_ref().map(|r| r.id.get() as i64);
     queries::update_dj_role(db, guild_id, role_id).await?;
 
     let description = if let Some(r) = role {
@@ -115,13 +115,13 @@ async fn volume(
 
     queries::update_volume(db, guild_id, vol).await?;
 
-    let volume_emoji = get_emoji(ctx.serenity_context(), "vol3".to_string()).await;
+    let volume_emoji = get_emoji(ctx.serenity_context(), "vol3").await;
     let embed = serenity::CreateEmbed::default()
         .title(format!(
             "{} Default Volume Updated",
             volume_emoji.unwrap_or_default()
         ))
-        .description(format!("New tracks will play at {}%", vol))
+        .description(format!("New tracks will play at {vol}%"))
         .color(COLOR_SUCCESS);
 
     ctx.send(poise::CreateReply::default().embed(embed)).await?;
@@ -148,7 +148,7 @@ async fn autodisconnect(
     } else {
         "Auto disconnect disabled".to_string()
     };
-    let clock_emoji = get_emoji(ctx.serenity_context(), "clock".to_string()).await;
+    let clock_emoji = get_emoji(ctx.serenity_context(), "clock").await;
     let embed = serenity::CreateEmbed::default()
         .title(format!(
             "{} Auto Disconnect Updated",
@@ -173,7 +173,7 @@ async fn announce(
     let guild_id = ctx.guild_id().ok_or("Must be in a guild")?.get() as i64;
     let db = ctx.data().database.pool();
 
-    let channel_id = channel.clone().map(|c| c.id.get() as i64);
+    let channel_id = channel.as_ref().map(|c| c.id.get() as i64);
     queries::update_announce_settings(db, guild_id, enabled, channel_id).await?;
 
     let description = if enabled {
@@ -186,7 +186,7 @@ async fn announce(
         "Song announcements disabled".to_string()
     };
 
-    let song_emoji = get_emoji(ctx.serenity_context(), "song".to_string()).await;
+    let song_emoji = get_emoji(ctx.serenity_context(), "song").await;
     let embed = serenity::CreateEmbed::default()
         .title(format!(
             "{} Announcements Updated",
@@ -213,13 +213,13 @@ async fn maxqueue(
 
     queries::update_max_queue_length(db, guild_id, length).await?;
 
-    let album_emoji = get_emoji(ctx.serenity_context(), "album".to_string()).await;
+    let album_emoji = get_emoji(ctx.serenity_context(), "album").await;
     let embed = serenity::CreateEmbed::default()
         .title(format!(
             "{} Max Queue Length Updated",
             album_emoji.unwrap_or_default()
         ))
-        .description(format!("Queue can now hold up to {} tracks", length))
+        .description(format!("Queue can now hold up to {length} tracks"))
         .color(COLOR_SUCCESS);
 
     ctx.send(poise::CreateReply::default().embed(embed)).await?;
@@ -243,7 +243,7 @@ async fn filters(
         "Audio filters are now disabled"
     };
 
-    let filter_emoji = get_emoji(ctx.serenity_context(), "filter".to_string()).await;
+    let filter_emoji = get_emoji(ctx.serenity_context(), "filter").await;
     let embed = serenity::CreateEmbed::default()
         .title(format!(
             "{} Filters Updated",
@@ -263,7 +263,7 @@ async fn reset(ctx: Context<'_>) -> Result<(), Error> {
     let db = ctx.data().database.pool();
 
     queries::reset_guild_config(db, guild_id).await?;
-    let recycle_emoji = get_emoji(ctx.serenity_context(), "recycle".to_string()).await;
+    let recycle_emoji = get_emoji(ctx.serenity_context(), "recycle").await;
     let embed = serenity::CreateEmbed::default()
         .title(format!(
             "{} Configuration Reset",

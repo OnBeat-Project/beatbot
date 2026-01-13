@@ -1,11 +1,15 @@
 use poise::serenity_prelude as serenity;
 
-pub async fn get_emoji(context: &serenity::Context, name: String) -> Option<String> {
-    let emojis = context.http.get_application_emojis().await.unwrap();
-    for emoji in emojis {
-        if emoji.name == name {
-            return Some(emoji.to_string());
-        }
-    }
-    None
+pub async fn get_emoji(context: &serenity::Context, input_name: &str) -> Option<String> {
+    context
+        .http
+        .get_application_emojis()
+        .await
+        .ok()
+        .and_then(|emojis| {
+            emojis
+                .into_iter()
+                .map(|emoji| emoji.name)
+                .find(|name| name.as_str() == input_name)
+        })
 }

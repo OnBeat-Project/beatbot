@@ -19,10 +19,8 @@ pub async fn remove(
 
     let is_dj_or_admin = permissions::check_dj_or_admin(ctx).await?;
     let check_in_voice = permissions::check_in_voice(ctx).await?;
-    let error_emoji =
-        crate::utils::emojis::get_emoji(ctx.serenity_context(), "cross".to_string()).await;
-    let success_emoji =
-        crate::utils::emojis::get_emoji(ctx.serenity_context(), "check".to_string()).await;
+    let error_emoji = crate::utils::emojis::get_emoji(ctx.serenity_context(), "cross").await;
+    let success_emoji = crate::utils::emojis::get_emoji(ctx.serenity_context(), "check").await;
     if !is_dj_or_admin {
         let embed = serenity::CreateEmbed::default()
             .title(format!(
@@ -72,10 +70,10 @@ pub async fn remove(
             "{} Track removed successfully",
             success_emoji.unwrap_or_default()
         ))
-        .description(format!("Removed {} from queue", track_name))
+        .description(format!("Removed {track_name} from queue"))
         .color(COLOR_SUCCESS);
 
-    let _ = ctx.send(poise::CreateReply::default().embed(embed));
+    let _ = ctx.send(poise::CreateReply::default().embed(embed)).await;
 
     Ok(())
 }

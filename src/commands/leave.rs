@@ -11,7 +11,7 @@ pub async fn leave(ctx: Context<'_>) -> Result<(), Error> {
 
     let manager = songbird::get(ctx.serenity_context()).await.unwrap().clone();
     let lava_client = ctx.data().lavalink.clone();
-    let success_emoji = emojis::get_emoji(ctx.serenity_context(), "check".to_string()).await;
+    let success_emoji = emojis::get_emoji(ctx.serenity_context(), "check").await;
     lava_client.delete_player(guild_id).await?;
 
     if manager.get(guild_id).is_some() {

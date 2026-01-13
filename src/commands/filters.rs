@@ -14,7 +14,7 @@ async fn filter_autocomplete(
     _ctx: Context<'_>,
     partial: &str,
 ) -> Vec<serenity::AutocompleteChoice> {
-    FilterPreset::all_presets()
+    FilterPreset::ALL
         .iter()
         .filter(|preset| {
             preset
@@ -24,7 +24,7 @@ async fn filter_autocomplete(
         })
         .map(|preset| {
             serenity::AutocompleteChoice::new(
-                format!("{}", preset.name()),
+                preset.name().to_string(),
                 preset.name().to_lowercase().replace(" ", "_"),
             )
         })
@@ -45,7 +45,7 @@ async fn apply(
     #[autocomplete = "filter_autocomplete"]
     preset: String,
 ) -> Result<(), Error> {
-    let error_emoji = get_emoji(ctx.serenity_context(), "error".to_string()).await;
+    let error_emoji = get_emoji(ctx.serenity_context(), "error").await;
 
     if !permissions::check_dj_or_admin(ctx).await? {
         let embed = serenity::CreateEmbed::default()
@@ -92,23 +92,7 @@ async fn apply(
         .get_player_context(guild_id)
         .ok_or("Not connected to voice channel")?;
 
-    let filter_preset = match preset.as_str() {
-        "bass_boost" => FilterPreset::Bassboost,
-        "nightcore" => FilterPreset::Nightcore,
-        "vaporwave" => FilterPreset::Vaporwave,
-        "8d_audio" => FilterPreset::EightD,
-        "karaoke" => FilterPreset::Karaoke,
-        "treble_boost" => FilterPreset::Treble,
-        "vibrato" => FilterPreset::Vibrato,
-        "tremolo" => FilterPreset::Tremolo,
-        "pop" => FilterPreset::Pop,
-        "soft" => FilterPreset::Soft,
-        "electronic" => FilterPreset::Electronic,
-        "rock" => FilterPreset::Rock,
-        "clear_(no_filters)" => FilterPreset::Clear,
-        _ => return Err("Invalid filter preset".into()),
-    };
-
+    let filter_preset = preset.parse::<FilterPreset>()?;
     let filters = filter_preset.to_filters();
     player.set_filters(filters).await?;
 
@@ -131,17 +115,18 @@ async fn apply(
 /// List all available filters
 #[poise::command(slash_command)]
 async fn list(ctx: Context<'_>) -> Result<(), Error> {
-    let mut description = String::new();
-    let filter_emoji = get_emoji(ctx.serenity_context(), "filter".to_string()).await;
-
-    for preset in FilterPreset::all_presets() {
-        description.push_str(&format!(
-            "{} **{}**\n{}\n\n",
-            preset.emoji(),
-            preset.name(),
-            preset.description()
-        ));
-    }
+    let description = FilterPreset::ALL
+        .into_iter()
+        .map(|preset| {
+            format!(
+                "{} **{}**\n{}\n\n",
+                preset.emoji(),
+                preset.name(),
+                preset.description()
+            )
+        })
+        .collect::<String>();
+    let filter_emoji = get_emoji(ctx.serenity_context(), "filter").await;
 
     let embed = serenity::CreateEmbed::default()
         .title(format!(
@@ -161,8 +146,8 @@ async fn list(ctx: Context<'_>) -> Result<(), Error> {
 /// Remove all filters
 #[poise::command(slash_command)]
 async fn clear(ctx: Context<'_>) -> Result<(), Error> {
-    let error_emoji = get_emoji(ctx.serenity_context(), "error".to_string()).await;
-    let check_emoji = get_emoji(ctx.serenity_context(), "check".to_string()).await;
+    let error_emoji = get_emoji(ctx.serenity_context(), "error").await;
+    let check_emoji = get_emoji(ctx.serenity_context(), "check").await;
 
     if !permissions::check_dj_or_admin(ctx).await? {
         let embed = serenity::CreateEmbed::default()
@@ -207,8 +192,8 @@ async fn custom(
     #[description = "Bass gain (-0.25 to 1.0)"] bass: Option<f64>,
     #[description = "Treble gain (-0.25 to 1.0)"] treble: Option<f64>,
 ) -> Result<(), Error> {
-    let error_emoji = get_emoji(ctx.serenity_context(), "error".to_string()).await;
-    let check_emoji = get_emoji(ctx.serenity_context(), "check".to_string()).await;
+    let error_emoji = get_emoji(ctx.serenity_context(), "error").await;
+    let check_emoji = get_emoji(ctx.serenity_context(), "check").await;
 
     if !permissions::check_dj_or_admin(ctx).await? {
         let embed = serenity::CreateEmbed::default()
@@ -259,10 +244,10 @@ async fn custom(
         });
 
         if let Some(s) = speed {
-            changes.push(format!("Speed: {:.2}x", s));
+            changes.push(format!("Speed: {s:.2}x"));
         }
         if let Some(p) = pitch {
-            changes.push(format!("Pitch: {:.2}x", p));
+            changes.push(format!("Pitch: {p:.2}x"));
         }
     }
 
@@ -274,7 +259,7 @@ async fn custom(
             for i in 0..4 {
                 bands.push((i, clamped));
             }
-            changes.push(format!("Bass: {:+.2}", clamped));
+            changes.push(format!("Bass: {clamped:+.2}"));
         }
 
         if let Some(treble_gain) = treble {
@@ -282,7 +267,7 @@ async fn custom(
             for i in 10..15 {
                 bands.push((i, clamped));
             }
-            changes.push(format!("Treble: {:+.2}", clamped));
+            changes.push(format!("Treble: {clamped:+.2}"));
         }
 
         let equalizer_bands: Vec<lavalink_rs::model::player::Equalizer> = bands

@@ -60,7 +60,9 @@ impl serenity::EventHandler for Handler {
             }
         };
         let _activity = set_guild_activity(&ctx);
-        let _ = channel_id.send_message(ctx.http, serenity::CreateMessage::default().embed(embed));
+        let _ = channel_id
+            .send_message(ctx.http, serenity::CreateMessage::default().embed(embed))
+            .await;
     }
 }
 
