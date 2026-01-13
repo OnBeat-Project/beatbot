@@ -42,7 +42,7 @@ pub async fn _join(
                 let player_data = PlayerData::new(
                     ctx.channel_id(),
                     ctx.serenity_context().http.clone(),
-                    Arc::new(ctx.data().database.pool().clone()),
+                    ctx.data().database.pool().clone(),
                 );
 
                 let player_ctx = lava_client

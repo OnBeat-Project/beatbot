@@ -5,14 +5,14 @@ use std::sync::Arc;
 pub struct PlayerData {
     pub channel_id: serenity::ChannelId,
     pub http: Arc<serenity::Http>,
-    pub db: Arc<sqlx::SqlitePool>,
+    pub db: sqlx::SqlitePool,
 }
 
 impl PlayerData {
     pub fn new(
         channel_id: serenity::ChannelId,
         http: Arc<serenity::Http>,
-        db: Arc<sqlx::SqlitePool>,
+        db: sqlx::SqlitePool,
     ) -> Self {
         Self {
             channel_id,
