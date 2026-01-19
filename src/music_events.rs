@@ -1,8 +1,9 @@
 use lavalink_rs::{hook, model::events, prelude::*};
 use poise::serenity_prelude as serenity;
 
-use crate::utils::{
-    announcements::AnnouncementBuilder, constants::COLOR_ERROR, player_data::PlayerData,
+use crate::{
+    utils::{announcements::AnnouncementBuilder, constants::COLOR_ERROR, player_data::PlayerData},
+    websocket::server::{broadcast_player_event, broadcast_track_update},
 };
 
 pub fn raw_event<'a>(
@@ -30,6 +31,23 @@ pub async fn track_start(client: LavalinkClient, _session_id: String, event: &ev
     if let Some(player) = client.get_player_context(event.guild_id)
         && let Ok(data) = player.data::<PlayerData>()
     {
+        let track_info = serde_json::json!({
+            "title": event.track.info.title,
+            "author": event.track.info.author,
+            "uri": event.track.info.uri,
+            "artwork_url": event.track.info.artwork_url,
+            "length": event.track.info.length,
+            "position": 0,
+            "requester_id": event.track.user_data.as_ref()
+                .and_then(|d| d["requester_id"].as_u64())
+                .map(|id| id.to_string())
+                .unwrap_or_default(),
+        });
+
+        if let Some(ws_clients) = &data.ws_clients {
+            let _ = broadcast_track_update(ws_clients, event.guild_id.0, track_info).await;
+        }
+
         let config =
             match crate::database::queries::get_guild_config(&data.db, event.guild_id.0 as i64)
                 .await
@@ -57,7 +75,6 @@ pub async fn track_start(client: LavalinkClient, _session_id: String, event: &ev
             .as_ref()
             .and_then(|d| d["requester_id"].as_u64())
             .unwrap_or_default();
-
         let embed = AnnouncementBuilder::now_playing(&event.track, requester_id);
 
         if let Err(e) = announce_channel
@@ -79,37 +96,50 @@ pub async fn track_end(client: LavalinkClient, _session_id: String, event: &even
         event.track.info.title, event.reason
     );
 
-    if event.reason != events::TrackEndReason::Replaced
-        && event.reason != events::TrackEndReason::Stopped
-        && let Some(player) = client.get_player_context(event.guild_id)
+    if let Some(player) = client.get_player_context(event.guild_id)
         && let Ok(data) = player.data::<PlayerData>()
     {
-        let config =
-            match crate::database::queries::get_guild_config(&data.db, event.guild_id.0 as i64)
-                .await
-            {
-                Ok(c) => c,
-                Err(_) => return,
-            };
+        let event_data = serde_json::json!({
+            "title": event.track.info.title,
+            "author": event.track.info.author,
+            "reason": format!("{:?}", event.reason),
+        });
 
-        if !config.announce_songs {
-            return;
+        if let Some(ws_clients) = &data.ws_clients {
+            let _ =
+                broadcast_player_event(ws_clients, event.guild_id.0, "trackEnd", event_data).await;
         }
 
-        let announce_channel = if let Some(channel_id) = config.announce_channel_id {
-            serenity::ChannelId::new(channel_id as u64)
-        } else {
-            data.channel_id
-        };
+        if event.reason != events::TrackEndReason::Replaced
+            && event.reason != events::TrackEndReason::Stopped
+        {
+            let config =
+                match crate::database::queries::get_guild_config(&data.db, event.guild_id.0 as i64)
+                    .await
+                {
+                    Ok(c) => c,
+                    Err(_) => return,
+                };
 
-        let embed = AnnouncementBuilder::track_ended(&event.track);
+            if !config.announce_songs {
+                return;
+            }
 
-        let _ = announce_channel
-            .send_message(
-                data.http.as_ref(),
-                serenity::CreateMessage::default().embed(embed),
-            )
-            .await;
+            let announce_channel = if let Some(channel_id) = config.announce_channel_id {
+                serenity::ChannelId::new(channel_id as u64)
+            } else {
+                data.channel_id
+            };
+
+            let embed = AnnouncementBuilder::track_ended(&event.track);
+
+            let _ = announce_channel
+                .send_message(
+                    data.http.as_ref(),
+                    serenity::CreateMessage::default().embed(embed),
+                )
+                .await;
+        }
     }
 }
 
@@ -127,6 +157,19 @@ pub async fn track_exception(
     if let Some(player) = client.get_player_context(event.guild_id)
         && let Ok(data) = player.data::<PlayerData>()
     {
+        let error_data = serde_json::json!({
+            "title": event.track.info.title,
+            "author": event.track.info.author,
+            "error": event.exception.message,
+            "severity": format!("{:?}", event.exception.severity),
+        });
+
+        if let Some(ws_clients) = &data.ws_clients {
+            let _ =
+                broadcast_player_event(ws_clients, event.guild_id.0, "trackException", error_data)
+                    .await;
+        }
+
         let embed = serenity::CreateEmbed::default()
             .title("<:forbidden2:1459603724895780970> Playback Error")
             .description(format!(
@@ -147,7 +190,7 @@ pub async fn track_exception(
 
 #[hook]
 pub async fn websocket_closed(
-    _client: LavalinkClient,
+    client: LavalinkClient,
     _session_id: String,
     event: &events::WebSocketClosed,
 ) {
@@ -155,4 +198,24 @@ pub async fn websocket_closed(
         "Websocket closed for guild {:?} - Code: {} - Reason: {} - By remote: {}",
         event.guild_id, event.code, event.reason, event.by_remote
     );
+
+    if let Some(player) = client.get_player_context(event.guild_id)
+        && let Ok(data) = player.data::<PlayerData>()
+    {
+        let event_data = serde_json::json!({
+            "code": event.code,
+            "reason": event.reason,
+            "by_remote": event.by_remote,
+        });
+
+        if let Some(ws_clients) = &data.ws_clients {
+            let _ = broadcast_player_event(
+                ws_clients,
+                event.guild_id.0,
+                "voiceDisconnected",
+                event_data,
+            )
+            .await;
+        }
+    }
 }

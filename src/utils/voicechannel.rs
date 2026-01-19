@@ -39,11 +39,22 @@ pub async fn _join(
 
         match handler {
             Ok((connection_info, _)) => {
-                let player_data = PlayerData::new(
-                    ctx.channel_id(),
-                    ctx.serenity_context().http.clone(),
-                    ctx.data().database.pool().clone(),
-                );
+                let ws_clients = ctx.data().ws_clients.clone();
+
+                let player_data = if let Some(clients) = ws_clients {
+                    PlayerData::with_ws_clients(
+                        ctx.channel_id(),
+                        ctx.serenity_context().http.clone(),
+                        ctx.data().database.pool().clone(),
+                        clients,
+                    )
+                } else {
+                    PlayerData::new(
+                        ctx.channel_id(),
+                        ctx.serenity_context().http.clone(),
+                        ctx.data().database.pool().clone(),
+                    )
+                };
 
                 let player_ctx = lava_client
                     .create_player_context_with_data::<PlayerData>(
@@ -56,7 +67,6 @@ pub async fn _join(
                 let config = queries::get_guild_config(db, guild_id.get() as i64).await?;
                 player_ctx.set_volume(config.volume as u16).await?;
 
-                // Start auto-disconnect monitoring
                 let auto_disconnect = AutoDisconnectManager::new(
                     guild_id,
                     db.clone(),

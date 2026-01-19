@@ -46,7 +46,6 @@ impl AutoDisconnectManager {
                     Err(_) => break,
                 };
 
-                // Check if nothing is playing and queue is empty
                 if player_data.track.is_none() {
                     let queue_count = match player.get_queue().get_count().await {
                         Ok(count) => count,
@@ -54,7 +53,6 @@ impl AutoDisconnectManager {
                     };
 
                     if queue_count == 0 {
-                        // Check if voice channel is empty (only bot)
                         let is_alone = self.check_if_alone().await;
 
                         if is_alone {
@@ -66,7 +64,6 @@ impl AutoDisconnectManager {
                             let disconnect_time = config.auto_disconnect_time as u64;
                             sleep(Duration::from_secs(disconnect_time)).await;
 
-                            // Verify conditions again after waiting
                             let config = match queries::get_guild_config(
                                 &self.db,
                                 self.guild_id.get() as i64,
@@ -95,7 +92,6 @@ impl AutoDisconnectManager {
                                 Err(_) => break,
                             };
 
-                            // Only disconnect if still inactive
                             if player_data.track.is_none() && queue_count == 0 {
                                 info!(
                                     "Auto-disconnect: Disconnecting from guild {} after {disconnect_time} seconds of inactivity",
@@ -145,7 +141,6 @@ impl AutoDisconnectManager {
                 .filter(|(user_id, _)| **user_id != bot_id)
                 .collect();
 
-            // Bot is alone if there are no other members or all members are bots
             members_in_channel.is_empty()
                 || members_in_channel
                     .iter()

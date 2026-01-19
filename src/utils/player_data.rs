@@ -1,3 +1,4 @@
+use crate::websocket::server::ClientConnections;
 use poise::serenity_prelude as serenity;
 use std::sync::Arc;
 
@@ -6,6 +7,7 @@ pub struct PlayerData {
     pub channel_id: serenity::ChannelId,
     pub http: Arc<serenity::Http>,
     pub db: sqlx::SqlitePool,
+    pub ws_clients: Option<ClientConnections>,
 }
 
 impl PlayerData {
@@ -18,6 +20,21 @@ impl PlayerData {
             channel_id,
             http,
             db,
+            ws_clients: None,
+        }
+    }
+
+    pub fn with_ws_clients(
+        channel_id: serenity::ChannelId,
+        http: Arc<serenity::Http>,
+        db: sqlx::SqlitePool,
+        ws_clients: ClientConnections,
+    ) -> Self {
+        Self {
+            channel_id,
+            http,
+            db,
+            ws_clients: Some(ws_clients),
         }
     }
 }
